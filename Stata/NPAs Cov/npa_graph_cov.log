@@ -1,0 +1,750 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/NPAs Cov/npa_graph_cov.lo
+> g
+  log type:  text
+ opened on:  27 Aug 2025, 15:59:34
+
+. drop _all
+
+. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+
+. *gnpas in millions
+. gen gnpa_mil = gross_npas/1000000
+(287 missing values generated)
+
+. drop if banks == "DENA BANK" & quarter_2 == tq(2012q2)
+(0 observations deleted)
+
+. *Plotting
+. collapse (mean) gnpa_mil, by(type_bank quarter_2)
+
+. egen type_num = group(type_bank)
+(23 missing values generated)
+
+. xtset type_num quarter_2
+
+Panel variable: type_num (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+         Delta: 1 quarter
+
+. xtline gnpa_mil, overlay xline(240) ytitle("Mean Gross NPA in Rs Million") ///
+> xtitle("Quarter") title("Mean Gross NPA") legend(lab(1 "Foreign Banks") lab(2 "Private Banks
+> ") ///
+> lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
+> saving("Graphs/gph/gnpa_avg_graph", replace) 
+file Graphs/gph/gnpa_avg_graph.gph saved
+
+. graph export "Graphs/jpg/gnpa_avg_graph_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/gnpa_avg_graph_cov.jpg
+    saved as JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+
+. *nnpas in millions
+. gen nnpa_mil = net_npas/1000000
+(287 missing values generated)
+
+. drop if banks == "DENA BANK" & quarter_2 == tq(2012q2)
+(0 observations deleted)
+
+. *Plotting
+. collapse (mean) nnpa_mil, by(type_bank quarter_2)
+
+. egen type_num = group(type_bank)
+(23 missing values generated)
+
+. xtset type_num quarter_2
+
+Panel variable: type_num (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+         Delta: 1 quarter
+
+. xtline nnpa_mil, overlay xline(240) ytitle("Rs Million") ///
+> xtitle("Quarter") title ("Mean Net NPAs") legend(lab(1 "Foreign Banks") lab(2 "Private Banks
+> ") ///
+> lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
+> saving("Graphs/gph/nnpa_avg_graph", replace)
+file Graphs/gph/nnpa_avg_graph.gph saved
+
+. graph export "Graphs/jpg/nnpa_avg_graph_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/nnpa_avg_graph_cov.jpg
+    saved as JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+
+. *gnpas in millions
+. gen gnpa_mil = gross_npas/1000000
+(287 missing values generated)
+
+. drop if banks == "DENA BANK" & quarter_2 == tq(2012q2)
+(0 observations deleted)
+
+. *Plotting
+. collapse (sum) gnpa_mil, by(type_bank quarter_2)
+
+. egen type_num = group(type_bank)
+(23 missing values generated)
+
+. xtset type_num quarter_2
+
+Panel variable: type_num (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+         Delta: 1 quarter
+
+. xtline gnpa_mil, overlay xline(240) ytitle("Rs Million") ///
+> xtitle("Quarter") title("Gross NPA by bank group") ///
+> legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
+> lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
+> saving("Graphs/gph/gnpa_sum_graph", replace)
+file Graphs/gph/gnpa_sum_graph.gph saved
+
+. graph export "Graphs/jpg/gnpa_sum_graph_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/gnpa_sum_graph_cov.jpg
+    saved as JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+
+. *nnpas in millions
+. gen nnpa_mil = net_npas/1000000
+(287 missing values generated)
+
+. drop if banks == "DENA BANK" & quarter_2 == tq(2012q2)
+(0 observations deleted)
+
+. *Plotting
+. collapse (sum) nnpa_mil, by(type_bank quarter_2)
+
+. egen type_num = group(type_bank)
+(23 missing values generated)
+
+. xtset type_num quarter_2
+
+Panel variable: type_num (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+         Delta: 1 quarter
+
+. xtline nnpa_mil, overlay xline(240) ytitle("Sum Net NPA in Rs Million") ///
+> xtitle("Quarter") title("Net NPA by Bank Group") ///
+> legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
+> lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
+> saving("Graphs/gph/nnpa_sum_graph", replace)
+file Graphs/gph/nnpa_sum_graph.gph saved
+
+. graph export "Graphs/jpg/nnpa_sum_graph_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/nnpa_sum_graph_cov.jpg
+    saved as JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+
+. gen gnpa_assets_ratio = gross_npas/total_assets
+(288 missing values generated)
+
+. drop if banks == "DENA BANK" & quarter_2 == tq(2012q2)
+(0 observations deleted)
+
+. *Plotting
+. collapse (mean) gnpa_assets_ratio, by(type_bank quarter_2)
+
+. egen type_num = group(type_bank)
+(23 missing values generated)
+
+. xtset type_num quarter_2
+
+Panel variable: type_num (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+         Delta: 1 quarter
+
+. xtline gnpa_assets_ratio, overlay xline(240) ytitle("Fraction of GNPAs") ///
+> xtitle("Quarter") title("Gross NPA ratio") ///
+> legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
+> lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
+> saving("Graphs/gph/rat_gnpa_avg_graph", replace) 
+file Graphs/gph/rat_gnpa_avg_graph.gph saved
+
+. graph export "Graphs/jpg/rat_gnpa_avg_graph_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/rat_gnpa_avg_graph_cov.jpg
+    saved as JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+
+. gen nnpa_asset_ratio = net_npas/total_assets
+(288 missing values generated)
+
+. 
+. drop if banks == "DENA BANK" & quarter_2 == tq(2012q2)
+(0 observations deleted)
+
+. *Plotting
+. collapse (mean) nnpa_asset_ratio, by(type_bank quarter_2)
+
+. egen type_num = group(type_bank)
+(23 missing values generated)
+
+. xtset type_num quarter_2
+
+Panel variable: type_num (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+         Delta: 1 quarter
+
+. xtline nnpa_asset_ratio, overlay xline(240) ytitle("Fraction of NNPAs") ///
+> xtitle("Quarter") title("Net NPA ratio by Bank Group") ///
+> legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
+> lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
+> saving("Graphs/gph/rat_nnpa_avg_graph", replace) 
+file Graphs/gph/rat_nnpa_avg_graph.gph saved
+
+. graph export "Graphs/jpg/rat_nnpa_avg_graph_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/rat_nnpa_avg_graph_cov.jpg
+    saved as JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+
+. gen gnpa_assets_ratio = gross_npas/total_assets
+(288 missing values generated)
+
+. keep if small_finance_dummy == 1
+(3,312 observations deleted)
+
+. egen bank_num2 = group(banks)
+
+. xtset bank_num2 quarter_2
+
+Panel variable: bank_num2 (unbalanced)
+ Time variable: quarter_2, 2016q4 to 2023q3
+         Delta: 1 quarter
+
+. xtline gnpa_assets_ratio, overlay xline(240) ytitle("Fraction of GNPAs") ///
+> xtitle("Quarter") title("GNPA ratio for Small Finance") /// 
+> saving("Graphs/gph/sf_gnpa_rat_cov", replace) 
+file Graphs/gph/sf_gnpa_rat_cov.gph saved
+
+. graph export "Graphs/jpg/sf_gnpa_rat_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/sf_gnpa_rat_cov.jpg saved
+    as JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+
+. keep if small_finance_dummy == 1
+(3,312 observations deleted)
+
+. egen bank_num2 = group(banks)
+
+. tsset bank_num2 quarter_2
+
+Panel variable: bank_num2 (unbalanced)
+ Time variable: quarter_2, 2016q4 to 2023q3
+         Delta: 1 quarter
+
+. bysort quarter_2: egen pctile_variable_0 = min(gnpa_ratio)
+
+. bysort quarter_2: egen pctile_variable_10 = pctile(gnpa_ratio), p(10)
+
+. bysort quarter_2: egen pctile_variable_25 = pctile(gnpa_ratio), p(25)
+
+. bysort quarter_2: egen pctile_variable_50 = pctile(gnpa_ratio), p(50)
+
+. bysort quarter_2: egen pctile_variable_75 = pctile(gnpa_ratio), p(75)
+
+. bysort quarter_2: egen pctile_variable_90 = pctile(gnpa_ratio), p(90)
+
+. bysort quarter_2: egen pctile_variable_100 = max(gnpa_ratio)
+
+. twoway (line pctile_variable_0 quarter_2, lcolor(purple)) ///
+>        (line pctile_variable_10 quarter_2, lcolor(blue) lpattern(dash)) ///
+>        (line pctile_variable_25 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_50 quarter_2, lcolor(red)) ///
+>        (line pctile_variable_75 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_90 quarter_2, lcolor(blue) lpattern(dash)) ///
+>            (line pctile_variable_100 quarter_2, lcolor(black)), ///
+>        legend(label(1 "0th Percentile") label(2 "10th Percentile") label(3 "25th Percentile"
+> ) ///
+>               label(4 "50th Percentile (Median)") label(5 "75th Percentile") ///
+>               label(6 "90th Percentile") label(7 "100th Percentile")) ///
+>        title("Time Series of Percentiles for Public Banks") ///
+>        graphregion(color(white)) legend(region(lc(none) fc(none))) ///
+>        xtitle("Quarter") ytitle("Percent") graphregion(fcolor("245 242 238")) ///
+>            saving("Graphs/gph/sf_gnpa_rat_cov", replace) 
+file Graphs/gph/sf_gnpa_rat_cov.gph saved
+
+. graph export "Graphs/jpg/sf_gnpa_rat_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/sf_gnpa_rat_cov.jpg saved
+    as JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+
+. // gen gnpa_assets_ratio = gross_npas/total_assets
+. keep if public_dummy == 1
+(2,990 observations deleted)
+
+. egen bank_num2 = group(banks)
+
+. tsset bank_num2 quarter_2
+
+Panel variable: bank_num2 (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2023q3
+         Delta: 1 quarter
+
+. bysort quarter_2: egen pctile_variable_0 = min(gnpa_ratio)
+
+. bysort quarter_2: egen pctile_variable_10 = pctile(gnpa_ratio), p(10)
+
+. bysort quarter_2: egen pctile_variable_25 = pctile(gnpa_ratio), p(25)
+
+. bysort quarter_2: egen pctile_variable_50 = pctile(gnpa_ratio), p(50)
+
+. bysort quarter_2: egen pctile_variable_75 = pctile(gnpa_ratio), p(75)
+
+. bysort quarter_2: egen pctile_variable_90 = pctile(gnpa_ratio), p(90)
+
+. bysort quarter_2: egen pctile_variable_100 = max(gnpa_ratio)
+
+. twoway (line pctile_variable_0 quarter_2, lcolor(purple)) ///
+>        (line pctile_variable_10 quarter_2, lcolor(blue) lpattern(dash)) ///
+>        (line pctile_variable_25 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_50 quarter_2, lcolor(red)) ///
+>        (line pctile_variable_75 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_90 quarter_2, lcolor(blue) lpattern(dash)) ///
+>            (line pctile_variable_100 quarter_2, lcolor(black)), ///
+>        legend(label(1 "0th Percentile") label(2 "10th Percentile") label(3 "25th Percentile"
+> ) ///
+>               label(4 "50th Percentile (Median)") label(5 "75th Percentile") ///
+>               label(6 "90th Percentile") label(7 "100th Percentile")) ///
+>        title("Time Series of Percentiles for Public Banks") ///
+>        graphregion(color(white)) legend(region(lc(none) fc(none))) ///
+>        xtitle("Quarter") ytitle("Percent") graphregion(fcolor("245 242 238")) ///
+>            saving("Graphs/gph/pub_perc_cov", replace) 
+file Graphs/gph/pub_perc_cov.gph saved
+
+. graph export "Graphs/jpg/pub_perc_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/pub_perc_cov.jpg saved as
+    JPG format
+
+.            
+. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+
+. // gen gnpa_assets_ratio = gross_npas/total_assets
+. keep if private_dummy == 1
+(2,652 observations deleted)
+
+. egen bank_num2 = group(banks)
+
+. tsset bank_num2 quarter_2
+
+Panel variable: bank_num2 (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+         Delta: 1 quarter
+
+. bysort quarter_2: egen pctile_variable_0 = min(gnpa_ratio)
+
+. bysort quarter_2: egen pctile_variable_10 = pctile(gnpa_ratio), p(10)
+
+. bysort quarter_2: egen pctile_variable_25 = pctile(gnpa_ratio), p(25)
+
+. bysort quarter_2: egen pctile_variable_50 = pctile(gnpa_ratio), p(50)
+
+. bysort quarter_2: egen pctile_variable_75 = pctile(gnpa_ratio), p(75)
+
+. bysort quarter_2: egen pctile_variable_90 = pctile(gnpa_ratio), p(90)
+
+. bysort quarter_2: egen pctile_variable_100 = max(gnpa_ratio)
+
+. twoway (line pctile_variable_0 quarter_2, lcolor(purple)) ///
+>        (line pctile_variable_10 quarter_2, lcolor(blue) lpattern(dash)) ///
+>        (line pctile_variable_25 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_50 quarter_2, lcolor(red)) ///
+>        (line pctile_variable_75 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_90 quarter_2, lcolor(blue) lpattern(dash)) ///
+>            (line pctile_variable_100 quarter_2, lcolor(black)), ///
+>        legend(label(1 "0th Percentile") label(2 "10th Percentile") label(3 "25th Percentile"
+> ) ///
+>               label(4 "50th Percentile (Median)") label(5 "75th Percentile") ///
+>               label(6 "90th Percentile") label(7 "100th Percentile")) ///
+>        title("Time Series of Percentiles for Private Banks") ///
+>        graphregion(color(white)) legend(region(lc(none) fc(none))) ///
+>        xtitle("Quarter") ytitle("Percent") graphregion(fcolor("245 242 238")) ///
+>            saving("Graphs/gph/pri_perc_cov", replace)
+file Graphs/gph/pri_perc_cov.gph saved
+
+. graph export "Graphs/jpg/pri_perc_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/pri_perc_cov.jpg saved as
+    JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+
+. // gen gnpa_assets_ratio = gross_npas/total_assets
+. keep if foreign_dummy == 1
+(1,956 observations deleted)
+
+. egen bank_num2 = group(banks)
+
+. tsset bank_num2 quarter_2
+
+Panel variable: bank_num2 (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3
+         Delta: 1 quarter
+
+. bysort quarter_2: egen pctile_variable_0 = min(gnpa_ratio)
+
+. bysort quarter_2: egen pctile_variable_10 = pctile(gnpa_ratio), p(10)
+
+. bysort quarter_2: egen pctile_variable_25 = pctile(gnpa_ratio), p(25)
+
+. bysort quarter_2: egen pctile_variable_50 = pctile(gnpa_ratio), p(50)
+
+. bysort quarter_2: egen pctile_variable_75 = pctile(gnpa_ratio), p(75)
+
+. bysort quarter_2: egen pctile_variable_90 = pctile(gnpa_ratio), p(90)
+
+. bysort quarter_2: egen pctile_variable_100 = max(gnpa_ratio)
+
+. twoway (line pctile_variable_0 quarter_2, lcolor(purple)) ///
+>        (line pctile_variable_10 quarter_2, lcolor(blue) lpattern(dash)) ///
+>        (line pctile_variable_25 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_50 quarter_2, lcolor(red)) ///
+>        (line pctile_variable_75 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_90 quarter_2, lcolor(blue) lpattern(dash)) ///
+>            (line pctile_variable_100 quarter_2, lcolor(black)), ///
+>        legend(label(1 "0th Percentile") label(2 "10th Percentile") label(3 "25th Percentile"
+> ) ///
+>               label(4 "50th Percentile (Median)") label(5 "75th Percentile") ///
+>               label(6 "90th Percentile") label(7 "100th Percentile")) ///
+>        title("Time Series of Percentiles of Foreign Banks") ///
+>        graphregion(color(white)) legend(region(lc(none) fc(none))) ///
+>        xtitle("Quarter") ytitle("Percent") graphregion(fcolor("245 242 238")) ///
+>            saving("Graphs/gph/for_perc_cov", replace)
+file Graphs/gph/for_perc_cov.gph saved
+
+. graph export "Graphs/jpg/for_perc_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/for_perc_cov.jpg saved as
+    JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_all_cov.dta", clear
+
+. gen gnpa_assets_ratio = gross_npas/total_assets
+(654 missing values generated)
+
+. keep if public_dummy == 1
+(3,680 observations deleted)
+
+. egen bank_num2 = group(banks)
+
+. tsset bank_num2 quarter_2
+
+Panel variable: bank_num2 (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2023q3
+         Delta: 1 quarter
+
+. bysort quarter_2: egen pctile_variable_0 = min(gnpa_assets_ratio)
+
+. bysort quarter_2: egen pctile_variable_10 = pctile(gnpa_assets_ratio), p(10)
+
+. bysort quarter_2: egen pctile_variable_25 = pctile(gnpa_assets_ratio), p(25)
+
+. bysort quarter_2: egen pctile_variable_50 = pctile(gnpa_assets_ratio), p(50)
+
+. bysort quarter_2: egen pctile_variable_75 = pctile(gnpa_assets_ratio), p(75)
+
+. bysort quarter_2: egen pctile_variable_90 = pctile(gnpa_assets_ratio), p(90)
+
+. bysort quarter_2: egen pctile_variable_100 = max(gnpa_assets_ratio)
+
+. twoway (line pctile_variable_0 quarter_2, lcolor(purple)) ///
+>        (line pctile_variable_10 quarter_2, lcolor(blue) lpattern(dash)) ///
+>        (line pctile_variable_25 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_50 quarter_2, lcolor(red)) ///
+>        (line pctile_variable_75 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_90 quarter_2, lcolor(blue) lpattern(dash)) ///
+>            (line pctile_variable_100 quarter_2, lcolor(black)), ///
+>        legend(label(1 "0th Percentile") label(2 "10th Percentile") label(3 "25th Percentile"
+> ) ///
+>               label(4 "50th Percentile (Median)") label(5 "75th Percentile") ///
+>               label(6 "90th Percentile") label(7 "100th Percentile")) ///
+>        title("Time Series of Percentiles Public") ///
+>        graphregion(color(white)) legend(region(lc(none) fc(none))) ///
+>        xtitle("Quarter") ytitle("Ratio") ///
+>            saving("Graphs/gph/pub_perc_all_cov", replace) 
+file Graphs/gph/pub_perc_all_cov.gph saved
+
+. graph export "Graphs/jpg/pub_perc_all_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/pub_perc_all_cov.jpg saved
+    as JPG format
+
+.            
+. use "Stata/Merged Cov/bank_vars_all_cov.dta", clear
+
+. gen gnpa_assets_ratio = gross_npas/total_assets
+(654 missing values generated)
+
+. keep if private_dummy == 1
+(3,404 observations deleted)
+
+. egen bank_num2 = group(banks)
+
+. tsset bank_num2 quarter_2
+
+Panel variable: bank_num2 (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2023q3
+         Delta: 1 quarter
+
+. bysort quarter_2: egen pctile_variable_0 = min(gnpa_assets_ratio)
+
+. bysort quarter_2: egen pctile_variable_10 = pctile(gnpa_assets_ratio), p(10)
+
+. bysort quarter_2: egen pctile_variable_25 = pctile(gnpa_assets_ratio), p(25)
+
+. bysort quarter_2: egen pctile_variable_50 = pctile(gnpa_assets_ratio), p(50)
+
+. bysort quarter_2: egen pctile_variable_75 = pctile(gnpa_assets_ratio), p(75)
+
+. bysort quarter_2: egen pctile_variable_90 = pctile(gnpa_assets_ratio), p(90)
+
+. bysort quarter_2: egen pctile_variable_100 = max(gnpa_assets_ratio)
+
+. twoway (line pctile_variable_0 quarter_2, lcolor(purple)) ///
+>        (line pctile_variable_10 quarter_2, lcolor(blue) lpattern(dash)) ///
+>        (line pctile_variable_25 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_50 quarter_2, lcolor(red)) ///
+>        (line pctile_variable_75 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_90 quarter_2, lcolor(blue) lpattern(dash)) ///
+>            (line pctile_variable_100 quarter_2, lcolor(black)), ///
+>        legend(label(1 "0th Percentile") label(2 "10th Percentile") label(3 "25th Percentile"
+> ) ///
+>               label(4 "50th Percentile (Median)") label(5 "75th Percentile") ///
+>               label(6 "90th Percentile") label(7 "100th Percentile")) ///
+>        title("Time Series of Percentiles Private") ///
+>        graphregion(color(white)) legend(region(lc(none) fc(none))) ///
+>        xtitle("Quarter") ytitle("Ratio") ///
+>            saving("Graphs/gph/pri_perc_all_cov", replace)
+file Graphs/gph/pri_perc_all_cov.gph saved
+
+. graph export "Graphs/jpg/pri_perc_all_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/pri_perc_all_cov.jpg saved
+    as JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_all_cov.dta", clear
+
+. gen gnpa_assets_ratio = gross_npas/total_assets
+(654 missing values generated)
+
+. keep if foreign_dummy == 1
+(2,116 observations deleted)
+
+. egen bank_num2 = group(banks)
+
+. tsset bank_num2 quarter_2
+
+Panel variable: bank_num2 (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2023q3
+         Delta: 1 quarter
+
+. bysort quarter_2: egen pctile_variable_0 = min(gnpa_assets_ratio)
+
+. bysort quarter_2: egen pctile_variable_10 = pctile(gnpa_assets_ratio), p(10)
+
+. bysort quarter_2: egen pctile_variable_25 = pctile(gnpa_assets_ratio), p(25)
+
+. bysort quarter_2: egen pctile_variable_50 = pctile(gnpa_assets_ratio), p(50)
+
+. bysort quarter_2: egen pctile_variable_75 = pctile(gnpa_assets_ratio), p(75)
+
+. bysort quarter_2: egen pctile_variable_90 = pctile(gnpa_assets_ratio), p(90)
+
+. bysort quarter_2: egen pctile_variable_100 = max(gnpa_assets_ratio)
+
+. twoway (line pctile_variable_0 quarter_2, lcolor(purple)) ///
+>        (line pctile_variable_10 quarter_2, lcolor(blue) lpattern(dash)) ///
+>        (line pctile_variable_25 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_50 quarter_2, lcolor(red)) ///
+>        (line pctile_variable_75 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_90 quarter_2, lcolor(blue) lpattern(dash)) ///
+>            (line pctile_variable_100 quarter_2, lcolor(black)), ///
+>        legend(label(1 "0th Percentile") label(2 "10th Percentile") label(3 "25th Percentile"
+> ) ///
+>               label(4 "50th Percentile (Median)") label(5 "75th Percentile") ///
+>               label(6 "90th Percentile") label(7 "100th Percentile")) ///
+>        title("Time Series of Percentiles Foreign") ///
+>        graphregion(color(white)) legend(region(lc(none) fc(none))) ///
+>        xtitle("Quarter") ytitle("Ratio") ///
+>            saving("Graphs/gph/for_perc_all_cov", replace)
+file Graphs/gph/for_perc_all_cov.gph saved
+
+. graph export "Graphs/jpg/for_perc_all_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/for_perc_all_cov.jpg saved
+    as JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_strict_cov.dta", clear
+
+. gen gnpa_assets_ratio = gross_npas/total_assets
+(119 missing values generated)
+
+. keep if public_dummy == 1
+(2,438 observations deleted)
+
+. egen bank_num2 = group(banks)
+
+. tsset bank_num2 quarter_2
+
+Panel variable: bank_num2 (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2023q3
+         Delta: 1 quarter
+
+. bysort quarter_2: egen pctile_variable_0 = min(gnpa_assets_ratio)
+
+. bysort quarter_2: egen pctile_variable_10 = pctile(gnpa_assets_ratio), p(10)
+
+. bysort quarter_2: egen pctile_variable_25 = pctile(gnpa_assets_ratio), p(25)
+
+. bysort quarter_2: egen pctile_variable_50 = pctile(gnpa_assets_ratio), p(50)
+
+. bysort quarter_2: egen pctile_variable_75 = pctile(gnpa_assets_ratio), p(75)
+
+. bysort quarter_2: egen pctile_variable_90 = pctile(gnpa_assets_ratio), p(90)
+
+. bysort quarter_2: egen pctile_variable_100 = max(gnpa_assets_ratio)
+
+. twoway (line pctile_variable_0 quarter_2, lcolor(purple)) ///
+>        (line pctile_variable_10 quarter_2, lcolor(blue) lpattern(dash)) ///
+>        (line pctile_variable_25 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_50 quarter_2, lcolor(red)) ///
+>        (line pctile_variable_75 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_90 quarter_2, lcolor(blue) lpattern(dash)) ///
+>            (line pctile_variable_100 quarter_2, lcolor(black)), ///
+>        legend(label(1 "0th Percentile") label(2 "10th Percentile") label(3 "25th Percentile"
+> ) ///
+>               label(4 "50th Percentile (Median)") label(5 "75th Percentile") ///
+>               label(6 "90th Percentile") label(7 "100th Percentile")) ///
+>        title("Time Series of Percentiles Public") ///
+>        graphregion(color(white)) legend(region(lc(none) fc(none))) ///
+>        xtitle("Quarter") ytitle("Ratio") ///
+>            saving("Graphs/gph/pub_perc_strict_cov", replace) 
+file Graphs/gph/pub_perc_strict_cov.gph saved
+
+. graph export "Graphs/jpg/pub_perc_strict_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/pub_perc_strict_cov.jpg
+    saved as JPG format
+
+.            
+. use "Stata/Merged Cov/bank_vars_strict_cov.dta", clear
+
+. gen gnpa_assets_ratio = gross_npas/total_assets
+(119 missing values generated)
+
+. keep if private_dummy == 1
+(2,254 observations deleted)
+
+. egen bank_num2 = group(banks)
+
+. tsset bank_num2 quarter_2
+
+Panel variable: bank_num2 (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2023q3
+         Delta: 1 quarter
+
+. bysort quarter_2: egen pctile_variable_0 = min(gnpa_assets_ratio)
+
+. bysort quarter_2: egen pctile_variable_10 = pctile(gnpa_assets_ratio), p(10)
+
+. bysort quarter_2: egen pctile_variable_25 = pctile(gnpa_assets_ratio), p(25)
+
+. bysort quarter_2: egen pctile_variable_50 = pctile(gnpa_assets_ratio), p(50)
+
+. bysort quarter_2: egen pctile_variable_75 = pctile(gnpa_assets_ratio), p(75)
+
+. bysort quarter_2: egen pctile_variable_90 = pctile(gnpa_assets_ratio), p(90)
+
+. bysort quarter_2: egen pctile_variable_100 = max(gnpa_assets_ratio)
+
+. twoway (line pctile_variable_0 quarter_2, lcolor(purple)) ///
+>        (line pctile_variable_10 quarter_2, lcolor(blue) lpattern(dash)) ///
+>        (line pctile_variable_25 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_50 quarter_2, lcolor(red)) ///
+>        (line pctile_variable_75 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_90 quarter_2, lcolor(blue) lpattern(dash)) ///
+>            (line pctile_variable_100 quarter_2, lcolor(black)), ///
+>        legend(label(1 "0th Percentile") label(2 "10th Percentile") label(3 "25th Percentile"
+> ) ///
+>               label(4 "50th Percentile (Median)") label(5 "75th Percentile") ///
+>               label(6 "90th Percentile") label(7 "100th Percentile")) ///
+>        title("Time Series of Percentiles Private") ///
+>        graphregion(color(white)) legend(region(lc(none) fc(none))) ///
+>        xtitle("Quarter") ytitle("Ratio") ///
+>            saving("Graphs/gph/pri_perc_strict_cov", replace)
+file Graphs/gph/pri_perc_strict_cov.gph saved
+
+. graph export "Graphs/jpg/pri_perc_strict_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/pri_perc_strict_cov.jpg
+    saved as JPG format
+
+. 
+. use "Stata/Merged Cov/bank_vars_strict_cov.dta", clear
+
+. gen gnpa_assets_ratio = gross_npas/total_assets
+(119 missing values generated)
+
+. keep if foreign_dummy == 1
+(1,564 observations deleted)
+
+. egen bank_num2 = group(banks)
+
+. tsset bank_num2 quarter_2
+
+Panel variable: bank_num2 (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2023q3
+         Delta: 1 quarter
+
+. bysort quarter_2: egen pctile_variable_0 = min(gnpa_assets_ratio)
+
+. bysort quarter_2: egen pctile_variable_10 = pctile(gnpa_assets_ratio), p(10)
+
+. bysort quarter_2: egen pctile_variable_25 = pctile(gnpa_assets_ratio), p(25)
+
+. bysort quarter_2: egen pctile_variable_50 = pctile(gnpa_assets_ratio), p(50)
+
+. bysort quarter_2: egen pctile_variable_75 = pctile(gnpa_assets_ratio), p(75)
+
+. bysort quarter_2: egen pctile_variable_90 = pctile(gnpa_assets_ratio), p(90)
+
+. bysort quarter_2: egen pctile_variable_100 = max(gnpa_assets_ratio)
+
+. twoway (line pctile_variable_0 quarter_2, lcolor(purple)) ///
+>        (line pctile_variable_10 quarter_2, lcolor(blue) lpattern(dash)) ///
+>        (line pctile_variable_25 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_50 quarter_2, lcolor(red)) ///
+>        (line pctile_variable_75 quarter_2, lcolor(green) lpattern(dash)) ///
+>        (line pctile_variable_90 quarter_2, lcolor(blue) lpattern(dash)) ///
+>            (line pctile_variable_100 quarter_2, lcolor(black)), ///
+>        legend(label(1 "0th Percentile") label(2 "10th Percentile") label(3 "25th Percentile"
+> ) ///
+>               label(4 "50th Percentile (Median)") label(5 "75th Percentile") ///
+>               label(6 "90th Percentile") label(7 "100th Percentile")) ///
+>        title("Time Series of Percentiles Foreign") ///
+>        graphregion(color(white)) legend(region(lc(none) fc(none))) ///
+>        xtitle("Quarter") ytitle("Ratio") ///
+>            saving("Graphs/gph/for_perc_strict_cov", replace)
+file Graphs/gph/for_perc_strict_cov.gph saved
+
+. graph export "Graphs/jpg/for_perc_strict_cov.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/for_perc_strict_cov.jpg
+    saved as JPG format
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/NPAs Cov/npa_graph_cov.lo
+> g
+  log type:  text
+ closed on:  27 Aug 2025, 15:59:55
+----------------------------------------------------------------------------------------------

@@ -1,117 +1,120 @@
 ----------------------------------------------------------------------------------------------
       name:  <unnamed>
-       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Priority Cov/mse_graph_co
-> v.log
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Priority/mse_graph.log
   log type:  text
- opened on:  27 Aug 2025, 16:16:36
+ opened on:  27 Aug 2025, 16:12:13
 
 . drop _all
 
-. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+. use "Stata/Merged/bank_vars.dta", clear
 
 . 
 . gen mse_gnpa_mil = mse_gnpa/1000000
-(592 missing values generated)
+(264 missing values generated)
 
 . *Plotting
 . collapse (sum) mse_gnpa_mil, by(type_bank quarter_2)
 
 . egen type_num = group(type_bank)
-(23 missing values generated)
 
 . xtset type_num quarter_2
 
-Panel variable: type_num (unbalanced)
- Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+Panel variable: type_num (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2019q4
          Delta: 1 quarter
 
-. xtline mse_gnpa_mil, overlay xline(240) title ("Gross NPA of MSE") ///
+. xtline mse_gnpa_mil, overlay xline(227) title ("Gross NPA of MSE") ///
 > ytitle("Rs Million") xtitle("Quarter") ///
 > legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
 > lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
-> saving("Graphs/gph/mse_sum_graph_cov", replace)
-file Graphs/gph/mse_sum_graph_cov.gph saved
+> saving("Graphs/gph/mse_sum_graph", replace)
+(file Graphs/gph/mse_sum_graph.gph not found)
+file Graphs/gph/mse_sum_graph.gph saved
 
-. graph export "Graphs/jpg/mse_sum_graph_cov.jpg", replace
-file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/mse_sum_graph_cov.jpg
-    saved as JPG format
+. graph export "Graphs/jpg/mse_sum_graph.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/mse_sum_graph.jpg saved as
+    JPG format
 
 . 
-. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+. use "Stata/Merged/bank_vars.dta", clear
 
 . *Plotting
 . collapse (mean) mse_gnpa_ratio, by(type_bank quarter_2)
 
 . egen type_num = group(type_bank)
-(23 missing values generated)
 
 . xtset type_num quarter_2
 
-Panel variable: type_num (unbalanced)
- Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+Panel variable: type_num (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2019q4
          Delta: 1 quarter
 
-. xtline mse_gnpa_ratio, overlay xline(240) ytitle("Mean Gross NPA Ration MSE in Rs Million") 
+. xtline mse_gnpa_ratio, overlay xline(227) ytitle("Mean Gross NPA Ration MSE in Rs Million") 
 > ///
 > xtitle("Quarter") legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
 > lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
-> saving("Graphs/gph/mse_avg_graph_cov", replace) 
-file Graphs/gph/mse_avg_graph_cov.gph saved
+> saving("Graphs/gph/mse_avg_graph", replace) 
+(file Graphs/gph/mse_avg_graph.gph not found)
+file Graphs/gph/mse_avg_graph.gph saved
 
-. graph export "Graphs/jpg/mse_avg_graph_cov.jpg", replace
-file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/mse_avg_graph_cov.jpg
-    saved as JPG format
+. graph export "Graphs/jpg/mse_avg_graph.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/mse_avg_graph.jpg saved as
+    JPG format
 
 . 
-. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+. use "Stata/Merged/bank_vars.dta", clear
 
 . gen mse_gnpa_to_gnpa = mse_gnpa/gross_npas
-(998 missing values generated)
+(546 missing values generated)
+
+. drop if quarter_2 == tq(2012q2)
+(78 observations deleted)
 
 . *Plotting
 . collapse (mean) mse_gnpa_to_gnpa, by(type_bank quarter_2)
 
 . egen type_num = group(type_bank)
-(23 missing values generated)
 
 . xtset type_num quarter_2
 
-Panel variable: type_num (unbalanced)
- Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+Panel variable: type_num (strongly balanced)
+ Time variable: quarter_2, 2012q3 to 2019q4
          Delta: 1 quarter
 
-. xtline mse_gnpa_to_gnpa, overlay xline(240) ytitle("Mean Gross NPA Ration MSE") ///
+. xtline mse_gnpa_to_gnpa, overlay xline(227) ytitle("Mean Gross NPA Ration MSE in Rs Million"
+> ) ///
 > xtitle("Quarter") legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
 > lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
-> saving("Graphs/gph/mse_rat_graph_cov", replace) 
-file Graphs/gph/mse_rat_graph_cov.gph saved
+> saving("Graphs/gph/mse_rat_graph", replace) 
+(file Graphs/gph/mse_rat_graph.gph not found)
+file Graphs/gph/mse_rat_graph.gph saved
 
-. graph export "Graphs/jpg/mse_rat_graph_cov.jpg", replace
-file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/mse_rat_graph_cov.jpg
-    saved as JPG format
+. graph export "Graphs/jpg/mse_rat_graph.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/mse_rat_graph.jpg saved as
+    JPG format
 
 . 
-. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+. use "Stata/Merged/bank_vars.dta", clear
 
 . gen priority_gnpa_ratio2 = priority_gnpa/total_assets
-(336 missing values generated)
+(59 missing values generated)
 
 . collapse (mean) priority_gnpa_ratio2, by(type_bank quarter_2)
 
 . egen type_num = group(type_bank)
-(23 missing values generated)
 
 . xtset type_num quarter_2
 
-Panel variable: type_num (unbalanced)
- Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+Panel variable: type_num (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2019q4
          Delta: 1 quarter
 
-. xtline priority_gnpa_ratio, overlay xline(240) title ("Gross NPA of pri") ///
+. xtline priority_gnpa_ratio, overlay xline(227) title ("Gross NPA of pri") ///
 > ytitle("Rs Million") xtitle("Quarter") ///
 > legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
 > lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
 > saving("Graphs/gph/pri_graph", replace)
+(file Graphs/gph/pri_graph.gph not found)
 file Graphs/gph/pri_graph.gph saved
 
 . graph export "Graphs/jpg/pri_graph.jpg", replace
@@ -119,27 +122,27 @@ file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/pri_graph.jpg 
     format
 
 . 
-. use "Stata/Merged Cov/bank_vars_cov.dta", clear
+. use "Stata/Merged/bank_vars.dta", clear
 
 . gen non_priority_gnpa_ratio2 = non_priority_gnpa/total_assets
-(303 missing values generated)
+(32 missing values generated)
 
 . collapse (mean) non_priority_gnpa_ratio2, by(type_bank quarter_2)
 
 . egen type_num = group(type_bank)
-(23 missing values generated)
 
 . xtset type_num quarter_2
 
-Panel variable: type_num (unbalanced)
- Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+Panel variable: type_num (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2019q4
          Delta: 1 quarter
 
-. xtline non_priority_gnpa_ratio, overlay xline(240) title ("Gross NPA of npri") ///
+. xtline non_priority_gnpa_ratio, overlay xline(227) title ("Gross NPA of npri") ///
 > ytitle("Rs Million") xtitle("Quarter") ///
 > legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
 > lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
 > saving("Graphs/gph/npri_graph", replace)
+(file Graphs/gph/npri_graph.gph not found)
 file Graphs/gph/npri_graph.gph saved
 
 . graph export "Graphs/jpg/npri_graph.jpg", replace
@@ -149,8 +152,7 @@ file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/npri_graph.jpg
 . 
 . log close
       name:  <unnamed>
-       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Priority Cov/mse_graph_co
-> v.log
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Priority/mse_graph.log
   log type:  text
- closed on:  27 Aug 2025, 16:16:41
+ closed on:  27 Aug 2025, 16:12:18
 ----------------------------------------------------------------------------------------------
