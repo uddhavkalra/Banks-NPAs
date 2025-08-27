@@ -1,0 +1,176 @@
+--------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Thesis/Stata/Balance Sheet/balance_shee
+> t_tab.log
+  log type:  text
+ opened on:  23 Jan 2024, 21:19:40
+
+. drop _all
+
+. use balance_sheet.dta, clear
+
+. *categorical variable for type
+. gen type_bank = 1 if foreign_dummy == 1
+(1,492 missing values generated)
+
+. replace type_bank = 2 if private_dummy == 1
+(631 real changes made)
+
+. replace type_bank = 3 if public_dummy == 1
+(758 real changes made)
+
+. replace type_bank = 4 if small_finance_dummy == 1
+(103 real changes made)
+
+. 
+. gen loans_adv_mil = net_loans_advances/1000000
+(1 missing value generated)
+
+. gen fixed_assets_mil = net_fixed_assets/1000000
+(4 missing values generated)
+
+. gen total_assets_mil = total_assets/1000000
+
+. gen deposits_mil = total_deposits/1000000
+(10 missing values generated)
+
+. gen liabilities_mil = total_liabilities/1000000
+
+. 
+. drop if quarter_2 < tq(2016q3)
+(1,495 observations deleted)
+
+. drop if quarter_2 > tq(2017q1)
+(1,038 observations deleted)
+
+. 
+. bysort type_bank: tabstat loans_adv_mil fixed_assets_mil total_assets_mi
+> l ///
+> deposits_mil liabilities_mil, by(quarter_2) stat(mean semean)
+
+--------------------------------------------------------------------------
+-> type_bank = 1
+
+Summary statistics: Mean, se(mean)
+Group variable: quarter_2 
+
+quarter_2 |  loans_~l  fixed_~l  total_~l  deposi~l  liabil~l
+----------+--------------------------------------------------
+      226 |  83618.29  1170.611  194924.7  118663.8  194924.7
+          |  25554.19  538.3162  59889.22  40742.92  59889.22
+----------+--------------------------------------------------
+      227 |  80490.21  1145.026  177846.8    104824  177846.8
+          |  24348.31  527.4863  52956.28  35252.87  52956.28
+----------+--------------------------------------------------
+      228 |  79121.47  1104.045  188265.6  110838.4  188265.6
+          |  23961.83  520.6271  57005.32  36940.31  57005.32
+----------+--------------------------------------------------
+    Total |  81091.93  1140.174  187012.4  111498.9  187012.4
+          |  14115.99   303.026  32478.25  21637.57  32478.25
+-------------------------------------------------------------
+
+--------------------------------------------------------------------------
+-> type_bank = 2
+
+Summary statistics: Mean, se(mean)
+Group variable: quarter_2 
+
+quarter_2 |  loans_~l  fixed_~l  total_~l  deposi~l  liabil~l
+----------+--------------------------------------------------
+      226 |    894656  12531.02   1495009   1098570   1495009
+          |    276787  5229.711  467990.6  344575.5  467990.6
+----------+--------------------------------------------------
+      227 |  909262.4  12881.12   1573129   1150135   1573129
+          |  283624.1  5144.525  490290.6    360484  490290.6
+----------+--------------------------------------------------
+      228 |  984356.2  13293.26   1637831   1214410   1637831
+          |  310368.8  5022.406  511513.7  376415.5  511513.7
+----------+--------------------------------------------------
+    Total |  929424.9   12901.8   1568657   1154372   1568657
+          |  165137.3  2915.571  278544.2  204966.9  278544.2
+-------------------------------------------------------------
+
+--------------------------------------------------------------------------
+-> type_bank = 3
+
+Summary statistics: Mean, se(mean)
+Group variable: quarter_2 
+
+quarter_2 |  loans_~l  fixed_~l  total_~l  deposi~l  liabil~l
+----------+--------------------------------------------------
+      226 |   3038490  90170.55   5283938   4598706   5283938
+          |   1670155  61775.19   2919229   2554928   2919229
+----------+--------------------------------------------------
+      227 |   3037035  90299.29   5744275   4999521   5744275
+          |   1683798  61772.18   3236977   2822242   3236977
+----------+--------------------------------------------------
+      228 |   3226736  90757.77   5870952   4966161   5870952
+          |   1859226  61967.29   3395772   2825799   3395772
+----------+--------------------------------------------------
+    Total |   3100754   90409.2   5633055   4854796   5633055
+          |  991921.7  35253.26   1818884   1560613   1818884
+-------------------------------------------------------------
+
+--------------------------------------------------------------------------
+-> type_bank = 4
+
+Summary statistics: Mean, se(mean)
+Group variable: quarter_2 
+
+quarter_2 |  loans_~l  fixed_~l  total_~l  deposi~l  liabil~l
+----------+--------------------------------------------------
+      227 |  35007.85   876.834  55878.55  16058.49  55878.55
+          |  23462.43    410.02  28705.74  8456.443  28705.74
+----------+--------------------------------------------------
+      228 |  28496.53  993.5553  49697.85  15696.15  49697.85
+          |  14264.86   579.956  21410.61  5949.427  21410.61
+----------+--------------------------------------------------
+    Total |  31101.06  946.8668  52170.13  15841.08  52170.13
+          |  10892.12  344.2873  14906.99  4216.364  14906.99
+-------------------------------------------------------------
+
+. 
+. use balance_sheet.dta, clear
+
+. gen type_bank = 1 if foreign_dummy == 1
+(1,492 missing values generated)
+
+. replace type_bank = 2 if private_dummy == 1
+(631 real changes made)
+
+. replace type_bank = 3 if public_dummy == 1
+(758 real changes made)
+
+. replace type_bank = 4 if small_finance_dummy == 1
+(103 real changes made)
+
+. keep if quarter_2 == tq(2018q4)
+(2,715 observations deleted)
+
+. count if type_bank == 1
+  44
+
+. count if type_bank == 2
+  21
+
+. count if type_bank == 3
+  21
+
+. count if type_bank == 4
+  10
+
+. 
+end of do-file
+
+. do "/var/folders/5b/jc4253hj4rl3y0jlxy2y3trm0000gn/T//SD54333.000000"
+
+. cd "/Users/uddhav/Desktop/Thesis/Stata/NPAs"
+/Users/uddhav/Desktop/Thesis/Stata/NPAs
+
+. log close
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Thesis/Stata/Balance Sheet/balance_shee
+> t_tab.log
+  log type:  text
+ closed on:  23 Jan 2024, 21:20:30
+--------------------------------------------------------------------------
