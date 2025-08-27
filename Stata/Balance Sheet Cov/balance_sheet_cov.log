@@ -3,7 +3,7 @@
        log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Balance Sheet Cov/balance
 > _sheet_cov.log
   log type:  text
- opened on:  26 Aug 2025, 20:47:15
+ opened on:  26 Aug 2025, 21:05:52
 
 . drop _all
 
@@ -91,9 +91,9 @@ Duplicates in terms of all variables
 file Stata/Balance Sheet Cov/balance_sheet_cov.dta saved
 
 . 
-. save "Stata/Merged/balance_sheet_cov.dta", replace
-(file Stata/Merged/balance_sheet_cov.dta not found)
-file Stata/Merged/balance_sheet_cov.dta saved
+. save "Stata/Merged Cov/balance_sheet_cov.dta", replace
+(file Stata/Merged Cov/balance_sheet_cov.dta not found)
+file Stata/Merged Cov/balance_sheet_cov.dta saved
 
 . 
 . log close
@@ -101,5 +101,5 @@ file Stata/Merged/balance_sheet_cov.dta saved
        log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Balance Sheet Cov/balance
 > _sheet_cov.log
   log type:  text
- closed on:  26 Aug 2025, 20:47:15
+ closed on:  26 Aug 2025, 21:05:52
 ----------------------------------------------------------------------------------------------

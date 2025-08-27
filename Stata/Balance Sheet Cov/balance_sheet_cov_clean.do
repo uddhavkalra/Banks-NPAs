@@ -63,6 +63,6 @@ sort(banks quarter_2)
 order banks quarter_2
 save "Stata/Balance Sheet Cov/balance_sheet_cov.dta", replace
 
-save "Stata/Merged/balance_sheet_cov.dta", replace
+save "Stata/Merged Cov/balance_sheet_cov.dta", replace
 
 log close

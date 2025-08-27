@@ -1,0 +1,71 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Branches Cov/branch_cov.l
+> og
+  log type:  text
+ opened on:  26 Aug 2025, 21:03:43
+
+. drop _all
+
+. *Import csv
+. import delimited "Clean Data/branch_all_cov.csv", bindquote(strict)
+(encoding automatically selected: UTF-8)
+(19 vars, 138,644 obs)
+
+. save "Stata/Branches Cov/branch_all_cov.dta", replace
+file Stata/Branches Cov/branch_all_cov.dta saved
+
+. *Load data
+. use "Stata/Branches Cov/branch_all_cov.dta", clear
+
+. *drop variables not needed
+. drop v1 contact imps upi rtgs neft micr
+
+. *order data
+. replace bank = strupper(bank)
+(1,846 real changes made)
+
+. replace state = strupper(state)
+(713 real changes made)
+
+. order bank district city state
+
+. drop if bank == ""
+(0 observations deleted)
+
+. drop if foreign_dummy ==.
+(0 observations deleted)
+
+. drop if bank == "510 ARMY BASE W/S CREDIT CO-OPERATIVE PRIMARY BANK"
+(1 observation deleted)
+
+. sort bank state
+
+. 
+. save "Stata/Branches Cov/branch_all_cov.dta", replace
+file Stata/Branches Cov/branch_all_cov.dta saved
+
+. 
+end of do-file
+
+. do "/var/folders/5b/jc4253hj4rl3y0jlxy2y3trm0000gn/T//SD37844.000000"
+
+. cd "/Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs"
+/Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs
+
+. *log close
+. log using "Stata/Balance Sheet Cov/balance_sheet_cov.log", replace
+log file already open
+r(604);
+
+end of do-file
+
+r(604);
+
+. log close
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Branches Cov/branch_cov.l
+> og
+  log type:  text
+ closed on:  26 Aug 2025, 21:05:47
+----------------------------------------------------------------------------------------------

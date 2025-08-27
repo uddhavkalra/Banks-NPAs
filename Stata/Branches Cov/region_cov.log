@@ -1,0 +1,698 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Branches Cov/region_cov.l
+> og
+  log type:  text
+ opened on:  26 Aug 2025, 21:09:33
+
+. drop _all
+
+. import delimited "Clean Data/state_pop.csv", clear 
+(encoding automatically selected: ISO-8859-1)
+(118 vars, 640 obs)
+
+. save "Stata/Branches Cov/state_pop.dta", replace
+file Stata/Branches Cov/state_pop.dta saved
+
+. use "Stata/Branches Cov/state_pop.dta", clear
+
+. keep statename districtname population
+
+. replace statename = regexr(statename, "ANDAMAN AND NICOBAR ISLANDS", ///
+> "ANDAMAN AND NICOBAR ISLAND")
+(3 real changes made)
+
+. replace statename = regexr(statename, "NCT OF DELHI", "DELHI")
+(9 real changes made)
+
+. replace statename = regexr(statename, "ORISSA", "ODISHA")
+(30 real changes made)
+
+. replace statename = regexr(statename, "PONDICHERRY", "PUDUCHERRY")
+(4 real changes made)
+
+. bysort state: egen pop = sum(population)
+
+. drop districtname population
+
+. duplicates drop
+
+Duplicates in terms of all variables
+
+(605 observations deleted)
+
+. rename (statename) (state)
+
+. save "Stata/Branches Cov/state_pop.dta", replace
+file Stata/Branches Cov/state_pop.dta saved
+
+. 
+. // import excel "/Users/uddhav/Desktop/Thesis/state_data/state_nva.xlsx", sheet("2019-20") f
+> irstrow clear
+. // save state_vars_cov.dta, replace
+. // use state_vars_cov.dta, clear
+. //
+. // drop N
+. // rename (State AgricultureForestryandFishin MiningandQuarrying Manufacturing ///
+. // ElectricityGasWaterSupply Construction TradeRepairHotelsandRestau ///
+. // TransportStorageCommunicatio FinancialServices RealEstateOwnershipOfDwelli ///
+. // PublicAdministration OtherServices TOTALNSVAatbasicprices) ///
+. // (state agri mining manu elec_gas_wat const hosp trans fin estate admin oserv NVA)
+. //
+. // gen serv = elec_gas_wat + hosp + trans + fin + estate + admin + oserv
+. //
+. // gen id = 1 if (state == "TELANGANA" |state == "ANDHRA PRADESH") 
+. // local varlist agri mining manu const serv
+. // foreach var in `varlist' {
+. //     local new_varname : subinstr local var " " "_", all
+. //     egen `new_varname'_sum = total(`var') if id ==1
+. // }
+. // foreach var in `varlist' {
+. //      replace `var' = `var'_sum if state == "ANDHRA PRADESH"
+. // }
+. // drop if state == "TELANGANA"
+. // keep state agri mining manu const serv NVA
+. //
+. // replace state = regexr(state, "ANDAMAN & NICOBAR", "ANDAMAN AND NICOBAR ISLAND")
+. // replace state = regexr(state , "JAMMU & KASHMIR", "JAMMU AND KASHMIR")
+. // save state_vars_cov.dta, replace
+. //
+. // use state_vars_cov.dta, clear
+. // merge 1:1 state using state_pop.dta
+. // drop _merge
+. //
+. // replace mining =. if mining == 0
+. //
+. // egen sum_agri = sum(agri)
+. // egen sum_mining = sum(mining)
+. // egen sum_manu = sum(manu)
+. // egen sum_const = sum(const)
+. // egen sum_serv = sum(serv)
+. //
+. // gen agri_ratio = agri/sum_agri
+. // gen mining_ratio = mining/sum_mining
+. // gen const_ratio = const/sum_const
+. // gen manu_ratio = manu/sum_manu
+. // gen serv_ratio = serv/sum_serv
+. //
+. // egen mean_agri_ratio = mean(agri_ratio)
+. // egen mean_mining_ratio = mean(mining_ratio)
+. // egen mean_manu_ratio = mean(manu_ratio)
+. // egen mean_const_ratio = mean(const_ratio)
+. // egen mean_serv_ratio = mean(serv_ratio)
+. //
+. // gen agri_state = 1 if agri_ratio > mean_agri_ratio
+. // replace agri_state = 0 if agri_state ==.
+. //
+. // gen mining_state = 1 if mining_ratio > mean_mining_ratio
+. // replace mining_state = 0 if mining_state ==.
+. //
+. // gen const_state = 1 if const_ratio > mean_const_ratio
+. // replace const_state = 0 if const_state ==.
+. //
+. // gen manu_state = 1 if manu_ratio > mean_manu_ratio
+. // replace manu_state = 0 if manu_state ==.
+. //
+. // gen serv_state = 1 if serv_ratio > mean_serv_ratio
+. // replace serv_state = 0 if serv_state ==.
+. //
+. // local varlist agri_state mining_state const_state manu_state serv_state
+. // foreach var in `varlist' {
+. //      replace `var' = 0 if (state == "DADRA AND NAGAR HAVELI" ///
+. //      |state == "DAMAN AND DIU" |state == "LAKSHADWEEP")
+. // }
+. //
+. // save state_vars_cov.dta, replace
+. 
+. use "Stata/Branches Cov/branch_all_cov.dta", clear
+
+. replace state = regexr(state, " TAMILNADU", "TAMIL NADU")
+(0 real changes made)
+
+. replace state = regexr(state, "TAMILNADU", "TAMIL NADU")
+(0 real changes made)
+
+. replace state = regexr(state, "TELANGANA", "ANDHRA PRADESH")
+(1,434 real changes made)
+
+. replace state = regexr(state, "KARANATAKA", "KARNATAKA")
+(0 real changes made)
+
+. sort bank state
+
+. bysort bank state: egen no_branches = count(state)
+
+. keep bank state no_branches
+
+. duplicates drop
+
+Duplicates in terms of all variables
+
+(136,236 observations deleted)
+
+. recast str30 state, force
+state:  1 value changed
+
+. 
+. merge m:1 state using "Stata/Branches Cov/state_pop.dta"
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                            30
+        from master                        30  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                             2,377  (_merge==3)
+    -----------------------------------------
+
+. browse if _merge == 1
+
+. drop if _merge == 1
+(30 observations deleted)
+
+. 
+. sort bank state
+
+. gen pop_thou = pop/1000
+
+. gen pop_per_branch = pop_thou/no_branches
+
+. 
+. bysort state: egen med_bank_pop = median(pop_per_branch)
+
+. 
+. gen in_state = 1 if pop_per_branch < med_bank_pop
+(1,428 missing values generated)
+
+. replace in_state = 0 if in_state ==.
+(1,428 real changes made)
+
+. 
+. tabulate state, generate(state_dummy)
+
+                         STATE |      Freq.     Percent        Cum.
+-------------------------------+-----------------------------------
+    ANDAMAN AND NICOBAR ISLAND |         24        1.01        1.01
+                ANDHRA PRADESH |         96        4.04        5.05
+             ARUNACHAL PRADESH |         25        1.05        6.10
+                         ASSAM |         48        2.02        8.12
+                         BIHAR |         68        2.86       10.98
+                    CHANDIGARH |         51        2.15       13.13
+                  CHHATTISGARH |         50        2.10       15.23
+        DADRA AND NAGAR HAVELI |         30        1.26       16.49
+                 DAMAN AND DIU |         25        1.05       17.54
+                         DELHI |         75        3.16       20.70
+                           GOA |         46        1.94       22.63
+                       GUJARAT |        171        7.19       29.83
+                       HARYANA |         73        3.07       32.90
+              HIMACHAL PRADESH |         41        1.72       34.62
+             JAMMU AND KASHMIR |         37        1.56       36.18
+                     JHARKHAND |         43        1.81       37.99
+                     KARNATAKA |        127        5.34       43.33
+                        KERALA |         96        4.04       47.37
+                   LAKSHADWEEP |          4        0.17       47.54
+                MADHYA PRADESH |        113        4.75       52.29
+                   MAHARASHTRA |        354       14.89       67.19
+                       MANIPUR |         31        1.30       68.49
+                     MEGHALAYA |         39        1.64       70.13
+                       MIZORAM |         28        1.18       71.31
+                      NAGALAND |         29        1.22       72.53
+                        ODISHA |         52        2.19       74.72
+                    PUDUCHERRY |         43        1.81       76.53
+                        PUNJAB |         74        3.11       79.64
+                     RAJASTHAN |         82        3.45       83.09
+                        SIKKIM |         33        1.39       84.48
+                    TAMIL NADU |         65        2.73       87.21
+                       TRIPURA |         36        1.51       88.73
+                 UTTAR PRADESH |        134        5.64       94.36
+                   UTTARAKHAND |         54        2.27       96.63
+                   WEST BENGAL |         80        3.37      100.00
+-------------------------------+-----------------------------------
+                         Total |      2,377      100.00
+
+. 
+. local varlist state_dummy1 state_dummy2 state_dummy3 state_dummy4 state_dummy5 ///
+> state_dummy6 state_dummy7 state_dummy8 state_dummy9 state_dummy10 state_dummy11 ///
+> state_dummy12 state_dummy13 state_dummy14 state_dummy15 state_dummy16 state_dummy17 ///
+> state_dummy18 state_dummy19 state_dummy20 state_dummy21 state_dummy22 state_dummy23 ///
+> state_dummy24 state_dummy25 state_dummy26 state_dummy27 state_dummy28 state_dummy29 ///
+> state_dummy30 state_dummy31 state_dummy32 state_dummy33 state_dummy34 state_dummy35
+
+. 
+. foreach var in `varlist' {
+  2.         local new_varname : subinstr local var " " "_", all
+  3.         gen `new_varname'_in = `var' * in_state
+  4. }
+
+. 
+. local varlist state_dummy1_in state_dummy2_in state_dummy3_in state_dummy4_in state_dummy5_i
+> n ///
+> state_dummy6_in state_dummy7_in state_dummy8_in state_dummy9_in state_dummy10_in state_dummy
+> 11_in ///
+> state_dummy12_in state_dummy13_in state_dummy14_in state_dummy15_in state_dummy16_in state_d
+> ummy17_in ///
+> state_dummy18_in state_dummy19_in state_dummy20_in state_dummy21_in state_dummy22_in state_d
+> ummy23_in ///
+> state_dummy24_in state_dummy25_in state_dummy26_in state_dummy27_in state_dummy28_in state_d
+> ummy29_in ///
+> state_dummy30_in state_dummy31_in state_dummy32_in state_dummy33_in state_dummy34_in state_d
+> ummy35_in
+
+. 
+. foreach var in `varlist' {
+  2.     local new_varname : subinstr local var " " "_", all
+  3.     bysort bank: egen `new_varname'_count = total(`var')
+  4. }
+
+. 
+. local varlist state_dummy1_in_count state_dummy2_in_count state_dummy3_in_count state_dummy4
+> _in_count state_dummy5_in_count ///
+> state_dummy6_in_count state_dummy7_in_count state_dummy8_in_count state_dummy9_in_count stat
+> e_dummy10_in_count state_dummy11_in_count ///
+> state_dummy12_in_count state_dummy13_in_count state_dummy14_in_count state_dummy15_in_count 
+> state_dummy16_in_count state_dummy17_in_count ///
+> state_dummy18_in_count state_dummy19_in_count state_dummy20_in_count state_dummy21_in_count 
+> state_dummy22_in_count state_dummy23_in_count ///
+> state_dummy24_in_count state_dummy25_in_count state_dummy26_in_count state_dummy27_in_count 
+> state_dummy28_in_count state_dummy29_in_count ///
+> state_dummy30_in_count state_dummy31_in_count state_dummy32_in_count state_dummy33_in_count 
+> state_dummy34_in_count state_dummy35_in_count
+
+. 
+. foreach var in `varlist' {
+  2.         local new_varname : subinstr local var "_in_count" "_f", all
+  3.         bysort bank: gen `new_varname' = 1 if `var' >= 1
+  4.         replace `new_varname' = 0 if `new_varname' ==.
+  5. }
+(2,138 missing values generated)
+(2,138 real changes made)
+(1,115 missing values generated)
+(1,115 real changes made)
+(1,995 missing values generated)
+(1,995 real changes made)
+(1,610 missing values generated)
+(1,610 real changes made)
+(1,324 missing values generated)
+(1,324 real changes made)
+(1,579 missing values generated)
+(1,579 real changes made)
+(1,554 missing values generated)
+(1,554 real changes made)
+(2,019 missing values generated)
+(2,019 real changes made)
+(2,036 missing values generated)
+(2,036 real changes made)
+(1,248 missing values generated)
+(1,248 real changes made)
+(1,651 missing values generated)
+(1,651 real changes made)
+(1,038 missing values generated)
+(1,038 real changes made)
+(1,294 missing values generated)
+(1,294 real changes made)
+(1,776 missing values generated)
+(1,776 real changes made)
+(1,819 missing values generated)
+(1,819 real changes made)
+(1,695 missing values generated)
+(1,695 real changes made)
+(1,049 missing values generated)
+(1,049 real changes made)
+(1,136 missing values generated)
+(1,136 real changes made)
+(2,343 missing values generated)
+(2,343 real changes made)
+(1,088 missing values generated)
+(1,088 real changes made)
+(993 missing values generated)
+(993 real changes made)
+(1,902 missing values generated)
+(1,902 real changes made)
+(1,823 missing values generated)
+(1,823 real changes made)
+(1,967 missing values generated)
+(1,967 real changes made)
+(1,908 missing values generated)
+(1,908 real changes made)
+(1,531 missing values generated)
+(1,531 real changes made)
+(1,777 missing values generated)
+(1,777 real changes made)
+(1,285 missing values generated)
+(1,285 real changes made)
+(1,231 missing values generated)
+(1,231 real changes made)
+(1,862 missing values generated)
+(1,862 real changes made)
+(1,440 missing values generated)
+(1,440 real changes made)
+(1,837 missing values generated)
+(1,837 real changes made)
+(1,072 missing values generated)
+(1,072 real changes made)
+(1,503 missing values generated)
+(1,503 real changes made)
+(1,228 missing values generated)
+(1,228 real changes made)
+
+. 
+. 
+. // gen in_agri = agri_state*in_state
+. //
+. // gen in_mining = mining_state*in_state
+. //
+. // gen in_manu = manu_state*in_state
+. //
+. // gen in_const = const_state*in_state
+. //
+. // gen in_serv = serv_state*in_state
+. //
+. //
+. // local varlist in_agri in_mining in_manu in_const in_serv
+. // foreach var in `varlist' {
+. //     local new_varname : subinstr local var " " "_", all
+. //     bysort bank: egen `new_varname'_count = total(`var')
+. // }
+. //
+. // local varlist in_agri_count in_mining_count in_manu_count in_const_count ///
+. // in_serv_count
+. // foreach var in `varlist' {
+. //      local new_varname : subinstr local var "count" "dummy", all
+. //      bysort bank: gen `new_varname' = 1 if `var' >= 1
+. //      replace `new_varname' = 0 if `new_varname' ==.
+. // }
+. //
+. // keep bank in_agri_dummy in_mining_dummy in_manu_dummy in_const_dummy in_serv_dummy
+. 
+. label variable state_dummy1_f "AN"
+
+. label variable state_dummy2_f "AP"
+
+. label variable state_dummy3_f "AR"
+
+. label variable state_dummy4_f "AS"
+
+. label variable state_dummy5_f "BR"
+
+. label variable state_dummy6_f "CH"
+
+. label variable state_dummy7_f "CT"
+
+. label variable state_dummy8_f "DN"
+
+. label variable state_dummy9_f "DD"
+
+. label variable state_dummy10_f "DL"
+
+. label variable state_dummy11_f "GA"
+
+. label variable state_dummy12_f "GJ"
+
+. label variable state_dummy13_f "HR"
+
+. label variable state_dummy14_f "HP"
+
+. label variable state_dummy15_f "JK"
+
+. label variable state_dummy16_f "JH"
+
+. label variable state_dummy17_f "KA"
+
+. label variable state_dummy18_f "KL"
+
+. label variable state_dummy19_f "LD"
+
+. label variable state_dummy20_f "MP"
+
+. label variable state_dummy21_f "MH"
+
+. label variable state_dummy22_f "MN"
+
+. label variable state_dummy23_f "ML"
+
+. label variable state_dummy24_f "MZ"
+
+. label variable state_dummy25_f "NL"
+
+. label variable state_dummy26_f "OR"
+
+. label variable state_dummy27_f "PY"
+
+. label variable state_dummy28_f "PB"
+
+. label variable state_dummy29_f "RJ"
+
+. label variable state_dummy30_f "SK"
+
+. label variable state_dummy31_f "TN"
+
+. label variable state_dummy32_f "TR"
+
+. label variable state_dummy33_f "UP"
+
+. label variable state_dummy34_f "UK"
+
+. label variable state_dummy35_f "WB"
+
+. 
+. bysort bank: egen no_branches_2 = sum(no_branches)
+
+. 
+. keep bank no_branches_2 state_dummy1_f state_dummy2_f state_dummy3_f state_dummy4_f ///
+> state_dummy5_f state_dummy6_f state_dummy7_f state_dummy8_f state_dummy9_f ///
+> state_dummy10_f state_dummy11_f state_dummy12_f state_dummy13_f state_dummy14_f ///
+> state_dummy15_f state_dummy16_f state_dummy17_f state_dummy18_f state_dummy19_f ///
+> state_dummy20_f state_dummy21_f state_dummy22_f state_dummy23_f state_dummy24_f ///
+> state_dummy25_f state_dummy26_f state_dummy27_f state_dummy28_f state_dummy29_f ///
+> state_dummy30_f state_dummy31_f state_dummy32_f state_dummy33_f state_dummy34_f state_dummy3
+> 5_f
+
+. 
+. duplicates drop
+
+Duplicates in terms of all variables
+
+(1,354 observations deleted)
+
+. 
+. rename (bank) (banks)
+
+. 
+. replace banks = regexr(banks, "ABU DHABI COMMERCIAL BANK", ///
+> "ABU DHABI COMMERCIAL BANK PJSC")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "AXIS BANK", "AXIS BANK LIMITED")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "B N P PARIBAS", "BNP PARIBAS")
+(0 real changes made)
+
+. 
+. drop if banks == "BANK"
+(0 observations deleted)
+
+. 
+. replace banks = regexr(banks, "BANK OF AMERICA", "BANK OF AMERICA , NATIONAL ASSOCIATION")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "BANK OF BAHARAIN AND KUWAIT BSC", "BANK OF BAHRAIN & KUWAIT B
+> .S.C.")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "BARCLAYS BANK", "BARCLAYS BANK PLC")
+(2 real changes made)
+
+. 
+. replace banks = regexr(banks, "CITI BANK", "CITIBANK N.A")
+(1 real change made)
+
+. 
+. // replace banks = regexr(banks, "CREDIT AGRICOLE CORPORATE AND INVESTMENT BANK CALYON BANK"
+> , ///
+. // "CREDIT AGRICOLE CORPORATE AND INVESTMENT BANK")
+. 
+. replace banks = regexr(banks, "DEUSTCHE BANK", "DEUTSCHE BANK AG")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "DHANALAKSHMI BANK", "THE DHANALAKSHMI BANK LTD")
+(1 real change made)
+
+. 
+. drop if banks == "DOHA BANK"
+(1 observation deleted)
+
+. 
+. replace banks = regexr(banks, "FEDERAL BANK", "FEDERAL BANK LTD")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "FIRSTRAND BANK LIMITED", "FIRSTRAND BANK LTD")
+(0 real changes made)
+
+. 
+. replace banks = regexr(banks, "HDFC BANK", "HDFC BANK LTD.")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "IDBI BANK", "IDBI BANK LIMITED")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "INDUSIND BANK", "INDUSIND BANK LTD")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "INDUSTRIAL AND COMMERCIAL BANK OF CHINA LIMITED", ///
+> "INDUSTRIAL AND COMMERCIAL BANK OF CHINA")
+(0 real changes made)
+
+. 
+. replace banks = regexr(banks, "JP MORGAN BANK", "JPMORGAN CHASE BANK NATIONAL ASSOCIATION")
+(0 real changes made)
+
+. 
+. replace banks = regexr(banks, "KARNATAKA BANK LIMITED", "KARNATAKA BANK LTD")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "KARUR VYSYA BANK", "KARUR VYSYA BANK LTD")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "KOTAK MAHINDRA BANK LIMITED", "KOTAK MAHINDRA BANK LTD.") 
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "LAXMI VILAS BANK", "LAKSHMI VILAS BANK LTD")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "MASHREQBANK PSC", "MASHREQ BANK PSC")
+(0 real changes made)
+
+. 
+. replace banks = regexr(banks, "MIZUHO CORPORATE BANK LIMITED", "MIZUHO BANK LTD")
+(0 real changes made)
+
+. 
+. replace banks = regexr(banks, "NATIONAL AUSTRALIA BANK LIMITED", "NATIONAL AUSTRALIA BANK")
+(0 real changes made)
+
+. 
+. *drop if banks == "RBL BANK LIMITED"
+. 
+. replace banks = regexr(banks, "RBL BANK", "RBL BANK LIMITED")
+(2 real changes made)
+
+. 
+. replace banks = regexr(banks, "SBER BANK", "SBERBANK")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "SOUTH INDIAN BANK", "SOUTH INDIAN BANK LTD")
+(1 real change made)
+
+. 
+. *replace banks = regexr(banks, "TAMILNAD MERCANTILE BANK LIMITED", "TAMILNAD MERCANTILE BANK
+>  LTD")
+. 
+. replace banks = regexr(banks, "UNITED OVERSEAS BANK", "UNITED OVERSEAS BANK LTD")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "YES BANK", "YES BANK LTD.")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "AB BANK", "AB BANK LIMITED")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "AUSTRALIA & NEW ZEALAND BANKING GROUP LTD.", "AUSTRALIA AND N
+> EW ZEALAND BANKING GROUP LIMITED")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "DOHA BANK QSC", "DOHA BANK Q.P.S.C")
+(0 real changes made)
+
+. 
+. replace banks = regexr(banks, "EMIRATES NBD BANK", "EMIRATES NBD BANK (P.J.S.C.)")
+(2 real changes made)
+
+. 
+. replace banks = regexr(banks, "FINCARE SMALL FINANCE BANK LIMITED ", "FINCARE SMALL FINANCE 
+> BANK LIMITED")
+(0 real changes made)
+
+. 
+. replace banks = regexr(banks, "IDFC FIRST BANK", "IDFC FIRST BANK LIMITED")
+(2 real changes made)
+
+. 
+. replace banks = regexr(banks, "INDUSTRIAL AND COMMERCIAL BANK OF CHINA LTD.", "INDUSTRIAL AN
+> D COMMERCIAL BANK OF CHINA")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "JAMMU AND KASHMIR BANK", "JAMMU & KASHMIR BANK LTD")
+(2 real changes made)
+
+. 
+. replace banks = regexr(banks, "JP MORGAN CHASE BANK NA", "JPMORGAN CHASE BANK NATIONAL ASSOC
+> IATION")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "MASHREQ BANK", "MASHREQ BANK PSC")
+(1 real change made)
+
+. 
+. replace banks = regexr(banks, "PT BANK MAYBANK INDONESIA TBK", "PT BANK MAYBANK INDONESIA TB
+> K")
+(0 real changes made)
+
+. 
+. replace banks = regexr(banks, "UTKARSH SMALL FINANCE BANK", "UTKARSH SMALL FINANCE BANK LIMI
+> TED")
+(1 real change made)
+
+. 
+. duplicates drop
+
+Duplicates in terms of all variables
+
+(0 observations are duplicates)
+
+. 
+. sort banks
+
+. by banks: gen dup = cond(_N==1,0,_n)
+
+. browse if dup > 0
+
+. drop dup
+
+. 
+. save "Stata/Branches Cov/state_dummies_cov.dta", replace
+file Stata/Branches Cov/state_dummies_cov.dta saved
+
+. 
+. save "Stata/Merged Cov/state_dummies_cov.dta", replace
+(file Stata/Merged Cov/state_dummies_cov.dta not found)
+file Stata/Merged Cov/state_dummies_cov.dta saved
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Branches Cov/region_cov.l
+> og
+  log type:  text
+ closed on:  26 Aug 2025, 21:09:35
+----------------------------------------------------------------------------------------------
