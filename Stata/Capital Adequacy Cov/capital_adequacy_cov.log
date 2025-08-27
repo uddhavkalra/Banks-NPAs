@@ -1,0 +1,78 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Capital Adequacy Cov/capi
+> tal_adequacy_cov.log
+  log type:  text
+ opened on:  27 Aug 2025, 12:40:21
+
+. drop _all
+
+. *Import csv
+. import delimited "Clean Data/capital_adequacy_cov.csv"
+(encoding automatically selected: ISO-8859-1)
+(31 vars, 4,003 obs)
+
+. save "Stata/Capital Adequacy Cov/capital_adequacy_cov.dta", replace
+file Stata/Capital Adequacy Cov/capital_adequacy_cov.dta saved
+
+. *Load data
+. use "Stata/Capital Adequacy Cov/capital_adequacy_cov.dta", clear
+
+. *Dropping Global variables
+. drop v1 tiericapitalstandalone_globalope commonequitytiericapitalstandalo ///
+> tieriicapitalstandalone_globalop totalcapitalstandalone_globalope ///
+> totalrwasstandaloneabc_globalope atotalrwascreditriskstandalone_g ///
+> btotalrwasmarketriskstandalone_g ctotalrwasoperationalriskstandal ///
+> capitalratiocrarstandalone_globa tiericapitalratiostandalone_glob ///
+> ceticapitalratiostandalone_globa tier2capitalratiostandalone_glob
+
+. *renaming variables
+. rename(tiericapitalstandalone_domestico v7 tieriicapitalstandalone_domestic ///
+> totalcapitalstandalone_domestico totalrwasstandaloneabc_domestico ///
+> atotalrwascreditriskstandalone_d btotalrwasmarketriskstandalone_d v19 ///
+> capitalratiocrarstandalone_domes tiericapitalratiostandalone_dome ///
+> ceticapitalratiostandalone_domes tier2capitalratiostandalone_dome) ///
+> (tier_1 tier_1_comm tier_2 total_cap total_RWAs cred_RWAs mkt_RWAs op_RWAs ///
+> CRAR tier_1_ratio CET_1_ratio tier_2_ratio)
+
+. *IDBI BANK LIMITED is coded as both private & public
+. browse if private_dummy == 1 & public_dummy == 1
+
+. *Fix IDBI
+. duplicates drop
+
+Duplicates in terms of all variables
+
+(40 observations deleted)
+
+. replace private_dummy = 0 if (private_dummy == 1 & public_dummy == 1)
+(40 real changes made)
+
+. *quarter as datetime
+. gen quarter_2 = quarterly(quarter, "YQ")
+
+. format quarter_2 %tq
+
+. drop quarter
+
+. *sort data
+. sort(banks quarter_2)
+
+. order banks quarter_2
+
+. save "Stata/Capital Adequacy Cov/capital_adequacy_cov.dta", replace
+file Stata/Capital Adequacy Cov/capital_adequacy_cov.dta saved
+
+. 
+. save "Stata/Merged Cov/capital_adequacy_cov.dta", replace
+(file Stata/Merged Cov/capital_adequacy_cov.dta not found)
+file Stata/Merged Cov/capital_adequacy_cov.dta saved
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Capital Adequacy Cov/capi
+> tal_adequacy_cov.log
+  log type:  text
+ closed on:  27 Aug 2025, 12:40:21
+----------------------------------------------------------------------------------------------

@@ -1,0 +1,54 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Farmers Deposits/farm_gra
+> ph.log
+  log type:  text
+ opened on:  27 Aug 2025, 12:55:53
+
+. drop _all
+
+. import excel "Clean Data/Farmers_deposits.xlsx", sheet("Sheet1") cellrange(A1:D8) firstrow c
+> ase(upper)
+(4 vars, 7 obs)
+
+. 
+. save "Stata/Farmers Deposits/farm_dep.dta", replace
+file Stata/Farmers Deposits/farm_dep.dta saved
+
+. 
+. use "Stata/Farmers Deposits/farm_dep.dta", clear
+
+. 
+. gen ca_mil = CURRENTACCOUNT/1000000
+
+. gen sa_mil = SAVINGSACCOUNT/1000000
+
+. gen td_mil = TERMAMOUNT/1000000
+
+. 
+. tsset YEAR
+
+Time variable: YEAR, 2012 to 2018
+        Delta: 1 unit
+
+. 
+. graph twoway (tsline ca_mil, lcolor(blue)) (tsline sa_mil, lcolor(red)) ///
+>         (tsline td_mil, lcolor(green)), xline(2016.5) ///
+>         ytitle("Rs Million") xtitle("Year") ///
+>         legend(pos(6) col(2) lab(1 "Current Account") lab(2 "Savings Account") ///
+>         lab(3 "Time Deposits")) xlabel(#7, nogrid) ylabel(,nogrid) ///
+>         saving("Graphs/gph/farm_dep", replace)
+file Graphs/gph/farm_dep.gph saved
+
+. graph export "Graphs/jpg/farm_dep.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/farm_dep.jpg saved as JPG
+    format
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Farmers Deposits/farm_gra
+> ph.log
+  log type:  text
+ closed on:  27 Aug 2025, 12:55:54
+----------------------------------------------------------------------------------------------

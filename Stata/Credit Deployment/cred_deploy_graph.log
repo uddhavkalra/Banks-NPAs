@@ -1,0 +1,84 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Credit Deployment/cred_de
+> ploy_graph.log
+  log type:  text
+ opened on:  27 Aug 2025, 12:46:58
+
+. drop _all
+
+. use "Stata/Credit Deployment/cred_deploy.dta", clear
+
+. 
+. gen mining_mil = mining/1000000
+
+. gen food_proce_mil = food_proce/1000000
+
+. gen bev_tob_mil = bev_tob/1000000
+
+. gen textile_mil = textile/1000000
+
+. gen leather_mil = leather/1000000
+
+. gen wood_mil = wood/1000000
+
+. gen paper_mil = paper/1000000
+
+. gen petrol_mil = petrol/1000000
+
+. gen chemicals_mil = chemicals/1000000
+
+. gen glass_mil = glass/1000000
+
+. gen rub_platsic_mil = rub_platsic/1000000
+
+. gen cement_mil = cement/1000000
+
+. gen metal_mil = metal/1000000
+
+. gen engineer_mil = engineer/1000000
+
+. gen auto_mil = auto/1000000
+
+. gen gems_mil = gems/1000000
+
+. gen construction_mil = construction/1000000
+
+. gen infra_mil = infra/1000000
+
+. gen other_industry_mil = other_industry/1000000
+
+. 
+. tsset quarter_2
+
+Time variable: quarter_2, 2012q2 to 2019q4
+        Delta: 1 quarter
+
+. graph twoway (tsline mining_mil food_proce_mil bev_tob_mil textile_mil ///
+> leather_mil wood_mil paper_mil petrol_mil chemicals_mil glass_mil ///
+> rub_platsic_mil cement_mil metal_mil engineer_mil auto_mil gems_mil ///
+> construction_mil infra_mil other_industry_mil), tline(2016q4) ///
+> ytitle("Rs Million") xtitle("Time") title("Credit Deployment by Banks") ///
+> legend(lab(1 "Mining") lab(2 "Food Processing") lab(3 "Beverages & Tobacco") ///
+> lab(4 "Textile") lab(5 "Leather") lab(6 "Wood") lab(7 "Paper") ///
+> lab(8 "Petrol") lab(9 "Chemicals") lab(10 "Glass") ///
+> lab(11 "Rubber & Plastic") lab(12 "Cement") lab(13 "Metal") ///
+> lab(14 "Engineering") lab(15 "Automobile") lab(16 "Gems") ///
+> lab(17 "Construction") lab(18 "Other Industries")) ///
+> saving("Graphs/gph/cred_deploy_ind_graph", replace)
+(file Graphs/gph/cred_deploy_ind_graph.gph not found)
+file Graphs/gph/cred_deploy_ind_graph.gph saved
+
+. 
+. graph export "Graphs/jpg/cred_deploy_ind_graph.jpg", replace
+file /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Graphs/jpg/cred_deploy_ind_graph.jpg
+    saved as JPG format
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Credit Deployment/cred_de
+> ploy_graph.log
+  log type:  text
+ closed on:  27 Aug 2025, 12:47:00
+----------------------------------------------------------------------------------------------
