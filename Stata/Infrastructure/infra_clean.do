@@ -41,6 +41,4 @@ sort(banks quarter_2)
 order banks quarter_2
 save "Stata/Infrastructure/infra.dta", replace
 
-save "Stata/Merged/infra.dta", replace
-
 log close

@@ -37,6 +37,4 @@ order quarter_2
 sort quarter_2
 save "Stata/Credit Deployment/cred_deploy.dta", replace
 
-save "Stata/Merged/cred_deploy.dta", replace
-
 log close

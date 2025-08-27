@@ -1,0 +1,85 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Performance Indicators Co
+> v/perform_ind_cov.log
+  log type:  text
+ opened on:  27 Aug 2025, 14:22:09
+
+. drop _all
+
+. *Import csv
+. import delimited "Clean data/performance_indicators_cov.csv"
+(encoding automatically selected: ISO-8859-1)
+(43 vars, 4,168 obs)
+
+. save "Stata/Performance Indicators Cov/perform_ind_cov.dta", replace
+file Stata/Performance Indicators Cov/perform_ind_cov.dta saved
+
+. *Load data
+. use "Stata/Performance Indicators Cov/perform_ind_cov.dta", clear
+
+. *Dropping Global and overseas variables
+. drop v1 costoffundsannualized_globaloper costoffundsannualized_overseasop ///
+> yieldonfundsannualized_globalope yieldonfundsannualized_overseaso ///
+> efficiencycostincomeratio_global efficiencycostincomeratio_overse ///
+> overheadefficiencyratio_globalop overheadefficiencyratio_overseas ///
+> profitmargin_globaloperation profitmargin_overseasoperation ///
+> netinterestmarginnimannualized_g netinterestmarginnimannualized_o ///
+> returnonequityannualized_globalo returnonequityannualized_oversea ///
+> returnontotalassetsannualized_gl returnontotalassetsannualized_ov v29 v30 ///
+> interestincometototalincome_glob interestincometototalincome_over ///
+> noninterestincometototalincome_g noninterestincometototalincome_o ///
+> staffexpensestototalincome_globa staffexpensestototalincome_overs
+
+. *Renaming Variables
+. rename(costoffundsannualized_domesticop yieldonfundsannualized_domestico ///
+> efficiencycostincomeratio_domest overheadefficiencyratio_domestic ///
+> profitmargin_domesticoperation netinterestmarginnimannualized_d ///
+> returnonequityannualized_domesti returnontotalassetsannualized_do ///
+> operatingprofittototalworkingfun interestincometototalincome_dome ///
+> noninterestincometototalincome_d staffexpensestototalincome_domes) ///
+> (cost_funds yield_funds eff_ratio overhead_eff_ratio profit_margin NIM ///
+> ROE ROTA op_profit_to_workingfun int_to_total_inc nint_to_total_inc ///
+> staff_to_toatl_inc)
+
+. *IDBI BANK LIMITED is coded as both private & public
+. browse if private_dummy == 1 & public_dummy == 1
+
+. *Fix IDBI
+. duplicates drop
+
+Duplicates in terms of all variables
+
+(40 observations deleted)
+
+. replace private_dummy = 0 if (private_dummy == 1 & public_dummy == 1)
+(40 real changes made)
+
+. *quarter as datetime
+. gen quarter_2 = quarterly(quarter, "YQ")
+
+. format quarter_2 %tq
+
+. drop quarter
+
+. *sort data
+. sort(banks quarter_2)
+
+. order banks quarter_2
+
+. save "Stata/Performance Indicators Cov/perform_ind_cov.dta", replace
+file Stata/Performance Indicators Cov/perform_ind_cov.dta saved
+
+. 
+. save "Stata/Merged Cov/perform_ind_cov.dta", replace
+(file Stata/Merged Cov/perform_ind_cov.dta not found)
+file Stata/Merged Cov/perform_ind_cov.dta saved
+
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Performance Indicators Co
+> v/perform_ind_cov.log
+  log type:  text
+ closed on:  27 Aug 2025, 14:22:10
+----------------------------------------------------------------------------------------------

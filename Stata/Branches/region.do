@@ -305,6 +305,4 @@ drop dup
 
 save "Stata/Branches/state_dummies.dta", replace
 
-save "Stata/Merged/state_dummies.dta", replace
-
 log close

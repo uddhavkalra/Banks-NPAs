@@ -1,0 +1,47 @@
+cd "/Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs"
+*log close
+log using "Stata/Money Stock/money_stock.log", replace
+drop _all
+*Import csv
+import delimited "Clean Data/money_stock.csv"
+save "Stata/Money Stock/money_stock.dta", replace
+use "Stata/Money Stock/money_stock.dta", clear
+*Dropping column with no info
+drop v1 sources2122232425_nan
+*Renaming variables
+rename(banks m3includingmerger_nan components11121314_11currencywit ///
+components11121314_12demanddepos components11121314_13timedeposit v8 ///
+components11121314_14otherdeposi sources2122232425_21netbankcredi v11 ///
+sources2122232425_211reservebank sources2122232425_212otherbanks ///
+sources2122232425_212otherbanksi sources2122232425_22bankcreditto v16 ///
+sources2122232425_221reservebank sources2122232425_222otherbanks ///
+sources2122232425_222otherbanksi sources2122232425_23netforeignex ///
+sources2122232425_24governmentsc sources2122232425_25bankingsecto) ///
+(m3 m3_merger currency_public demand_deposits time_deposits ///
+time_deposits_merger other_deposits net_bank_cred_govt ///
+net_bank_cred_govt_merger reserve_bank_govt other_banks_govt ///
+other_banks_govt_merger bank_cred_commercial bank_cred_commercial_merger ///
+reserve_bank_commercial other_banks_commercial other_banks_commercial_merger ///
+net_forex_assets govt_currency_liability_public net_non_monetary_liabilities)
+
+rename(v23 sources2122232425_251netnonmonet date) ///
+(net_nomon_liabilities_merger net_nomon_liabilities_rbi Date)
+*Date as datetime
+replace Date = regexr(Date, " 00:00:00", "")
+gen Date_2 = date(Date, "YMD")
+format Date_2 %td
+drop Date
+*sort Data
+order Date_2
+sort Date_2
+*dropping values out of time of study
+keep if Date_2 < td(1/1/2020)
+keep if Date_2 > td(31/5/2012)
+*dropping empty variables
+drop m3_merger time_deposits_merger net_bank_cred_govt_merger ///
+other_banks_govt_merger bank_cred_commercial_merger ///
+other_banks_commercial_merger net_nomon_liabilities_merger
+save "Stata/Money Stock/money_stock.dta", replace
+
+log close
+

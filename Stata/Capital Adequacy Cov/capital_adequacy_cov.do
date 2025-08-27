@@ -36,6 +36,4 @@ sort(banks quarter_2)
 order banks quarter_2
 save "Stata/Capital Adequacy Cov/capital_adequacy_cov.dta", replace
 
-save "Stata/Merged Cov/capital_adequacy_cov.dta", replace
-
 log close

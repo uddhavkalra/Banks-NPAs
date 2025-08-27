@@ -1,0 +1,4453 @@
+----------------------------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Merged Cov/merge_all2_cov
+> .log
+  log type:  text
+ opened on:  27 Aug 2025, 15:29:33
+
+. drop _all
+
+. use "Stata/NPAs Cov/asset_quality_cov.dta", clear
+
+. merge 1:1 banks quarter_2 using "Stata/Balance Sheet Cov/balance_sheet_cov.dta"
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             0
+    Matched                             4,128  (_merge==3)
+    -----------------------------------------
+
+. rename(_merge)(merge_balance)
+
+. merge 1:1 banks quarter_2 using "Stata/Capital Adequacy Cov/capital_adequacy_cov.dta"
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                           165
+        from master                       165  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                             3,963  (_merge==3)
+    -----------------------------------------
+
+. rename(_merge)(merge_capad)
+
+. merge 1:1 banks quarter_2 using "Stata/Major Sectoral Cov/major_sectoral_cov.dta"
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             3
+        from master                         0  (_merge==1)
+        from using                          3  (_merge==2)
+
+    Matched                             4,128  (_merge==3)
+    -----------------------------------------
+
+. rename(_merge)(merge_sect)
+
+. merge 1:1 banks quarter_2 using "Stata/Profitability Cov/profitability_cov.dta"
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             3
+        from master                         3  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                             4,128  (_merge==3)
+    -----------------------------------------
+
+. rename(_merge)(merge_profit)
+
+. merge 1:1 banks quarter_2 using "Stata/Infrastructure Cov/infra_cov.dta"
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                           792
+        from master                       789  (_merge==1)
+        from using                          3  (_merge==2)
+
+    Matched                             3,342  (_merge==3)
+    -----------------------------------------
+
+. rename(_merge)(merge_infra)
+
+. merge 1:1 banks quarter_2 using "Stata/Performance Indicators Cov/perform_ind_cov.dta"
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             6
+        from master                         6  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                             4,128  (_merge==3)
+    -----------------------------------------
+
+. rename(_merge)(merge_perform)
+
+. merge 1:1 banks quarter_2 using "Stata/Priority Cov/priority_cov.dta"
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                             6
+        from master                         6  (_merge==1)
+        from using                          0  (_merge==2)
+
+    Matched                             4,128  (_merge==3)
+    -----------------------------------------
+
+. rename(_merge)(merge_priority)
+
+. save "Stata/Merged Cov/bank_vars_all_cov.dta", replace
+(file Stata/Merged Cov/bank_vars_all_cov.dta not found)
+file Stata/Merged Cov/bank_vars_all_cov.dta saved
+
+. 
+. use "Stata/Merged Cov/bank_vars_all_cov.dta", clear
+
+. drop if banks == "DENA BANK" & quarter_2 == tq(2012q2)
+(1 observation deleted)
+
+. fillin banks quarter_2
+
+. 
+. *Gen ids for mergers
+. *Merged to SBI
+. gen merger = 1 if (banks == "BHARATIYA MAHILA BANK LTD." | banks == "STATE BANK OF INDIA" //
+> /
+> | banks == "STATE BANK OF BIKANER AND JAIPUR" | banks == "STATE BANK OF HYDERABAD" ///
+> | banks == "STATE BANK OF MYSORE" | banks == "STATE BANK OF PATIALA" ///
+> | banks == "STATE BANK OF TRAVANCORE")
+(4,830 missing values generated)
+
+. 
+. *Merged to Kotak
+. replace merger = 2 if (banks == "ING VYSYA BANK LTD" | banks == "KOTAK MAHINDRA BANK LTD.")
+(92 real changes made)
+
+. 
+. *Merged to Indian Bank
+. replace merger = 3 if (banks == "ALLAHABAD BANK" | banks == "INDIAN BANK")
+(92 real changes made)
+
+. 
+. *Merged to Union Bank
+. replace merger = 4 if (banks == "ANDHRA BANK" | banks == "CORPORATION BANK" ///
+> | banks == "UNION BANK OF INDIA")
+(138 real changes made)
+
+. 
+. *Merged to Baroda
+. replace merger = 5 if (banks == "VIJAYA BANK" | banks == "DENA BANK" ///
+> | banks == "BANK OF BARODA")
+(138 real changes made)
+
+. 
+. *Merged to PNB
+. replace merger = 6 if (banks == "ORIENTAL BANK OF COMMERCE" | banks == "PUNJAB NATIONAL BANK
+> " ///
+> | banks == "UNITED BANK OF INDIA")
+(138 real changes made)
+
+. 
+. *Merged to Canara
+. replace merger = 7 if (banks == "SYNDICATE BANK" | banks == "CANARA BANK")
+(92 real changes made)
+
+. 
+. *Merged to DBS
+. replace merger = 8 if (banks == "DBS BANK INDIA LTD." | banks == "LAKSHMI VILAS BANK LTD") 
+(92 real changes made)
+
+. 
+. *Merged to DCB
+. replace merger = 9 if (banks == "DCB BANK LIMITED" | banks == "ABU DHABI COMMERCIAL BANK PJS
+> C")
+(92 real changes made)
+
+. 
+. local varlist gross_advances gross_npas substandard_advances doubtful_advances ///
+> loss_advances provision_npas net_advances net_npas restruct_stand_advances ///
+> stressed_adv loans_to_ARCs loss_gain cashfunds due_from_banks slr_securities ///
+> nslr_inv net_loans_advances net_fixed_assets other_assets total_assets ///
+> paidup_share_capital reserves_surplus total_deposits customer_deposits ///
+> current_deposits savings_deposits time_deposits nri_deposits certificate_deposits ///
+> deposits_banks deposits_ind_banks deposits_nind_banks total_borrowings ///
+> other_liabilities total_liabilities tier_1 tier_1_comm tier_2 total_cap ///
+> gross_adv gnpa food_cred_gadv food_cred_gnpa nfc_gadv nfc_gnp agri_gadv ///
+> agri_gnpa ind_gadv ind_gnpa serv_gadv serv_gnpa retail_gadv retail_gnpa ///
+> onfc_gadv onfc_gnpa house_gadv house_gnpa auto_gadv auto_gnpa cred_gadv ///
+> cred_gnpa edu_gadv edu_gnpa oretail_gadv oretail_gnpa total_int_inc int_exp ///
+> NII OOI total_oi OE staff_exp net_oi capital_gains other_noi EBPT risk_prov ///
+> write_offs liability_ptov PBT IT_prov PAT infrastructure transport railways ///
+> urban_pub_transport shipyards logistics_infra logistic_govt_psu energy elec_gen ///
+> elec_govt_psu state_elec_board elec_transmission elec_distr_govt_psu ///
+> elec_distr_state elec_distr oil oil_storage oil_others solid_waste water_sanitation ///
+> water_treatment water_sanitation_2 irrigation strom_water slurry_pipe ///
+> communication telecom_twr soc_comm_infra edu_infra hospital tourism_hotels ///
+> other_soc_comm fertilizer harv_storage terminal_mkt soil_testing roadways ///
+> ports inland_water airport elec_gen_govt_psu elec_gen_private elec_distr_private ///
+> water_supply telecom_ficed_net telecom cold_chain sports tourism_rope_cable ///
+> cost_funds yield_funds priority_gadv priority_gnpa non_priority_gadv ///
+> non_priority_gnpa mse_gadv mse_gnpa other_priority_gadv other_priority_gnpa
+
+. 
+. foreach var in `varlist' {
+  2.     local new_varname : subinstr local var " " "_", all
+  3.     bysort quarter_2: egen `new_varname'_sum = total(`var') if merger == 1
+  4. }
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+(4,830 missing values generated)
+
+. 
+. foreach var in `varlist' {
+  2.         replace `var' = `var'_sum if banks == "STATE BANK OF INDIA"
+  3. }
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(42 real changes made)
+(39 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(40 real changes made)
+(46 real changes made)
+(46 real changes made)
+(39 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(12 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(40 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(26 real changes made)
+(5 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(20 real changes made)
+(30 real changes made)
+(46 real changes made)
+(45 real changes made)
+(45 real changes made)
+(26 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(44 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(43 real changes made)
+(41 real changes made)
+(44 real changes made)
+(42 real changes made)
+(43 real changes made)
+(46 real changes made)
+(37 real changes made)
+(44 real changes made)
+(46 real changes made)
+(45 real changes made)
+(45 real changes made)
+(44 real changes made)
+(44 real changes made)
+(45 real changes made)
+(43 real changes made)
+(43 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(45 real changes made)
+(46 real changes made)
+(44 real changes made)
+(44 real changes made)
+(44 real changes made)
+(44 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(45 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(20 real changes made)
+(20 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+
+. 
+. foreach var in `varlist' {
+  2.         drop `var'_sum
+  3. }
+
+. 
+. foreach var in `varlist' {
+  2.     local new_varname : subinstr local var " " "_", all
+  3.     bysort quarter_2: egen `new_varname'_sum = total(`var') if merger == 2
+  4. }
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+
+. 
+. foreach var in `varlist' {
+  2.         replace `var' = `var'_sum if banks == "KOTAK MAHINDRA BANK LTD."
+  3. }
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(26 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(40 real changes made)
+(46 real changes made)
+(27 real changes made)
+(27 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(44 real changes made)
+(44 real changes made)
+(35 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(34 real changes made)
+(12 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(39 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(32 real changes made)
+(46 real changes made)
+(42 real changes made)
+(45 real changes made)
+(37 real changes made)
+(46 real changes made)
+(33 real changes made)
+(21 real changes made)
+(13 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(26 real changes made)
+(26 real changes made)
+(46 real changes made)
+(44 real changes made)
+(42 real changes made)
+(25 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(42 real changes made)
+(31 real changes made)
+(11 real changes made)
+(27 real changes made)
+(36 real changes made)
+(36 real changes made)
+(26 real changes made)
+(37 real changes made)
+(39 real changes made)
+(34 real changes made)
+(37 real changes made)
+(26 real changes made)
+(27 real changes made)
+(27 real changes made)
+(29 real changes made)
+(13 real changes made)
+(10 real changes made)
+(23 real changes made)
+(25 real changes made)
+(37 real changes made)
+(28 real changes made)
+(33 real changes made)
+(27 real changes made)
+(25 real changes made)
+(25 real changes made)
+(42 real changes made)
+(38 real changes made)
+(32 real changes made)
+(35 real changes made)
+(29 real changes made)
+(28 real changes made)
+(24 real changes made)
+(31 real changes made)
+(32 real changes made)
+(27 real changes made)
+(27 real changes made)
+(46 real changes made)
+(38 real changes made)
+(40 real changes made)
+(39 real changes made)
+(40 real changes made)
+(45 real changes made)
+(43 real changes made)
+(37 real changes made)
+(45 real changes made)
+(46 real changes made)
+(45 real changes made)
+(45 real changes made)
+(45 real changes made)
+(13 real changes made)
+(13 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(43 real changes made)
+
+. 
+. foreach var in `varlist' {
+  2.         drop `var'_sum
+  3. }
+
+. 
+. foreach var in `varlist' {
+  2.     local new_varname : subinstr local var " " "_", all
+  3.     bysort quarter_2: egen `new_varname'_sum = total(`var') if merger == 3
+  4. }
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+
+. 
+. foreach var in `varlist' {
+  2.         replace `var' = `var'_sum if banks == "INDIAN BANK"
+  3. }
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(36 real changes made)
+(35 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(45 real changes made)
+(46 real changes made)
+(37 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(11 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(43 real changes made)
+(40 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(43 real changes made)
+(9 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(3 real changes made)
+(11 real changes made)
+(46 real changes made)
+(45 real changes made)
+(32 real changes made)
+(24 real changes made)
+(46 real changes made)
+(44 real changes made)
+(46 real changes made)
+(46 real changes made)
+(41 real changes made)
+(38 real changes made)
+(28 real changes made)
+(45 real changes made)
+(46 real changes made)
+(44 real changes made)
+(46 real changes made)
+(46 real changes made)
+(35 real changes made)
+(44 real changes made)
+(44 real changes made)
+(35 real changes made)
+(46 real changes made)
+(25 real changes made)
+(25 real changes made)
+(16 real changes made)
+(27 real changes made)
+(19 real changes made)
+(43 real changes made)
+(43 real changes made)
+(34 real changes made)
+(35 real changes made)
+(37 real changes made)
+(37 real changes made)
+(40 real changes made)
+(39 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(45 real changes made)
+(34 real changes made)
+(34 real changes made)
+(32 real changes made)
+(39 real changes made)
+(39 real changes made)
+(46 real changes made)
+(46 real changes made)
+(44 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(44 real changes made)
+(45 real changes made)
+(44 real changes made)
+(44 real changes made)
+(44 real changes made)
+(32 real changes made)
+(32 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+
+. 
+. foreach var in `varlist' {
+  2.         drop `var'_sum
+  3. }
+
+. 
+. foreach var in `varlist' {
+  2.     local new_varname : subinstr local var " " "_", all
+  3.     bysort quarter_2: egen `new_varname'_sum = total(`var') if merger == 4
+  4. }
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+
+. 
+. foreach var in `varlist' {
+  2.         replace `var' = `var'_sum if banks == "UNION BANK OF INDIA"
+  3. }
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(37 real changes made)
+(31 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(35 real changes made)
+(46 real changes made)
+(46 real changes made)
+(33 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(11 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(27 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(40 real changes made)
+(35 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(33 real changes made)
+(19 real changes made)
+(46 real changes made)
+(46 real changes made)
+(21 real changes made)
+(30 real changes made)
+(45 real changes made)
+(45 real changes made)
+(45 real changes made)
+(46 real changes made)
+(45 real changes made)
+(44 real changes made)
+(38 real changes made)
+(41 real changes made)
+(42 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(39 real changes made)
+(44 real changes made)
+(46 real changes made)
+(41 real changes made)
+(43 real changes made)
+(43 real changes made)
+(25 real changes made)
+(41 real changes made)
+(29 real changes made)
+(41 real changes made)
+(46 real changes made)
+(46 real changes made)
+(37 real changes made)
+(46 real changes made)
+(38 real changes made)
+(40 real changes made)
+(37 real changes made)
+(38 real changes made)
+(46 real changes made)
+(42 real changes made)
+(42 real changes made)
+(46 real changes made)
+(45 real changes made)
+(42 real changes made)
+(43 real changes made)
+(41 real changes made)
+(41 real changes made)
+(46 real changes made)
+(40 real changes made)
+(42 real changes made)
+(41 real changes made)
+(43 real changes made)
+(43 real changes made)
+(43 real changes made)
+(44 real changes made)
+(44 real changes made)
+(44 real changes made)
+(41 real changes made)
+(42 real changes made)
+(42 real changes made)
+(32 real changes made)
+(32 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+
+. 
+. foreach var in `varlist' {
+  2.         drop `var'_sum
+  3. }
+
+. 
+. foreach var in `varlist' {
+  2.     local new_varname : subinstr local var " " "_", all
+  3.     bysort quarter_2: egen `new_varname'_sum = total(`var') if merger == 5
+  4. }
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+
+. 
+. foreach var in `varlist' {
+  2.         replace `var' = `var'_sum if banks == "BANK OF BARODA"
+  3. }
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(39 real changes made)
+(35 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(44 real changes made)
+(46 real changes made)
+(46 real changes made)
+(28 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(28 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(44 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(34 real changes made)
+(28 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(28 real changes made)
+(9 real changes made)
+(46 real changes made)
+(46 real changes made)
+(28 real changes made)
+(5 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(24 real changes made)
+(41 real changes made)
+(41 real changes made)
+(46 real changes made)
+(46 real changes made)
+(43 real changes made)
+(28 real changes made)
+(40 real changes made)
+(43 real changes made)
+(31 real changes made)
+(46 real changes made)
+(46 real changes made)
+(29 real changes made)
+(46 real changes made)
+(23 real changes made)
+(46 real changes made)
+(46 real changes made)
+(42 real changes made)
+(45 real changes made)
+(45 real changes made)
+(32 real changes made)
+(28 real changes made)
+(36 real changes made)
+(32 real changes made)
+(46 real changes made)
+(39 real changes made)
+(46 real changes made)
+(40 real changes made)
+(46 real changes made)
+(37 real changes made)
+(39 real changes made)
+(27 real changes made)
+(22 real changes made)
+(46 real changes made)
+(45 real changes made)
+(41 real changes made)
+(42 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(42 real changes made)
+(43 real changes made)
+(43 real changes made)
+(28 real changes made)
+(28 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+
+. 
+. foreach var in `varlist' {
+  2.         drop `var'_sum
+  3. }
+
+. 
+. foreach var in `varlist' {
+  2.     local new_varname : subinstr local var " " "_", all
+  3.     bysort quarter_2: egen `new_varname'_sum = total(`var') if merger == 6
+  4. }
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+(5,014 missing values generated)
+
+. 
+. foreach var in `varlist' {
+  2.         replace `var' = `var'_sum if banks == "PUNJAB NATIONAL BANK"
+  3. }
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(36 real changes made)
+(33 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(37 real changes made)
+(46 real changes made)
+(46 real changes made)
+(32 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(11 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(44 real changes made)
+(41 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(42 real changes made)
+(22 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(31 real changes made)
+(7 real changes made)
+(46 real changes made)
+(46 real changes made)
+(33 real changes made)
+(28 real changes made)
+(46 real changes made)
+(45 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(35 real changes made)
+(38 real changes made)
+(38 real changes made)
+(42 real changes made)
+(46 real changes made)
+(46 real changes made)
+(41 real changes made)
+(43 real changes made)
+(44 real changes made)
+(18 real changes made)
+(42 real changes made)
+(45 real changes made)
+(30 real changes made)
+(31 real changes made)
+(38 real changes made)
+(34 real changes made)
+(45 real changes made)
+(36 real changes made)
+(38 real changes made)
+(42 real changes made)
+(20 real changes made)
+(18 real changes made)
+(42 real changes made)
+(40 real changes made)
+(45 real changes made)
+(43 real changes made)
+(44 real changes made)
+(45 real changes made)
+(41 real changes made)
+(36 real changes made)
+(38 real changes made)
+(34 real changes made)
+(18 real changes made)
+(46 real changes made)
+(46 real changes made)
+(41 real changes made)
+(46 real changes made)
+(44 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(38 real changes made)
+(44 real changes made)
+(45 real changes made)
+(32 real changes made)
+(32 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+
+. 
+. foreach var in `varlist' {
+  2.         drop `var'_sum
+  3. }
+
+. 
+. foreach var in `varlist' {
+  2.     local new_varname : subinstr local var " " "_", all
+  3.     bysort quarter_2: egen `new_varname'_sum = total(`var') if merger == 7
+  4. }
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+
+. 
+. foreach var in `varlist' {
+  2.         replace `var' = `var'_sum if banks == "CANARA BANK"
+  3. }
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(30 real changes made)
+(25 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(33 real changes made)
+(46 real changes made)
+(46 real changes made)
+(17 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(11 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(44 real changes made)
+(46 real changes made)
+(38 real changes made)
+(46 real changes made)
+(44 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(35 real changes made)
+(10 real changes made)
+(46 real changes made)
+(46 real changes made)
+(30 real changes made)
+(23 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(10 real changes made)
+(29 real changes made)
+(29 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(19 real changes made)
+(46 real changes made)
+(46 real changes made)
+(19 real changes made)
+(46 real changes made)
+(46 real changes made)
+(9 real changes made)
+(19 real changes made)
+(37 real changes made)
+(32 real changes made)
+(32 real changes made)
+(32 real changes made)
+(30 real changes made)
+(34 real changes made)
+(32 real changes made)
+(32 real changes made)
+(40 real changes made)
+(36 real changes made)
+(12 real changes made)
+(19 real changes made)
+(19 real changes made)
+(18 real changes made)
+(11 real changes made)
+(18 real changes made)
+(18 real changes made)
+(18 real changes made)
+(18 real changes made)
+(46 real changes made)
+(46 real changes made)
+(37 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(37 real changes made)
+(46 real changes made)
+(37 real changes made)
+(37 real changes made)
+(37 real changes made)
+(32 real changes made)
+(32 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+
+. 
+. foreach var in `varlist' {
+  2.         drop `var'_sum
+  3. }
+
+. 
+. foreach var in `varlist' {
+  2.     local new_varname : subinstr local var " " "_", all
+  3.     bysort quarter_2: egen `new_varname'_sum = total(`var') if merger == 8
+  4. }
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+
+. 
+. foreach var in `varlist' {
+  2.         replace `var' = `var'_sum if banks == "DBS BANK INDIA LTD."
+  3. }
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(44 real changes made)
+(46 real changes made)
+(28 real changes made)
+(28 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(9 real changes made)
+(46 real changes made)
+(46 real changes made)
+(40 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(28 real changes made)
+(11 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(43 real changes made)
+(46 real changes made)
+(46 real changes made)
+(38 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(41 real changes made)
+(41 real changes made)
+(46 real changes made)
+(40 real changes made)
+(44 real changes made)
+(36 real changes made)
+(20 real changes made)
+(0 real changes made)
+(40 real changes made)
+(36 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(34 real changes made)
+(0 real changes made)
+(46 real changes made)
+(42 real changes made)
+(4 real changes made)
+(18 real changes made)
+(45 real changes made)
+(42 real changes made)
+(44 real changes made)
+(46 real changes made)
+(28 real changes made)
+(17 real changes made)
+(18 real changes made)
+(32 real changes made)
+(32 real changes made)
+(27 real changes made)
+(46 real changes made)
+(35 real changes made)
+(27 real changes made)
+(26 real changes made)
+(33 real changes made)
+(27 real changes made)
+(27 real changes made)
+(37 real changes made)
+(20 real changes made)
+(44 real changes made)
+(27 real changes made)
+(27 real changes made)
+(23 real changes made)
+(27 real changes made)
+(22 real changes made)
+(28 real changes made)
+(27 real changes made)
+(27 real changes made)
+(42 real changes made)
+(34 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(34 real changes made)
+(30 real changes made)
+(30 real changes made)
+(33 real changes made)
+(32 real changes made)
+(30 real changes made)
+(46 real changes made)
+(37 real changes made)
+(37 real changes made)
+(37 real changes made)
+(37 real changes made)
+(46 real changes made)
+(37 real changes made)
+(37 real changes made)
+(39 real changes made)
+(46 real changes made)
+(37 real changes made)
+(37 real changes made)
+(37 real changes made)
+(36 real changes made)
+(36 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+
+. 
+. foreach var in `varlist' {
+  2.         drop `var'_sum
+  3. }
+
+. 
+. foreach var in `varlist' {
+  2.     local new_varname : subinstr local var " " "_", all
+  3.     bysort quarter_2: egen `new_varname'_sum = total(`var') if merger == 9
+  4. }
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+(5,060 missing values generated)
+
+. 
+. foreach var in `varlist' {
+  2.         replace `var' = `var'_sum if banks == "DCB BANK LIMITED"
+  3. }
+(46 real changes made)
+(46 real changes made)
+(41 real changes made)
+(42 real changes made)
+(26 real changes made)
+(44 real changes made)
+(46 real changes made)
+(41 real changes made)
+(27 real changes made)
+(46 real changes made)
+(30 real changes made)
+(25 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(45 real changes made)
+(46 real changes made)
+(17 real changes made)
+(46 real changes made)
+(46 real changes made)
+(36 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(46 real changes made)
+(31 real changes made)
+(11 real changes made)
+(38 real changes made)
+(46 real changes made)
+(46 real changes made)
+(25 real changes made)
+(46 real changes made)
+(40 real changes made)
+(37 real changes made)
+(37 real changes made)
+(46 real changes made)
+(43 real changes made)
+(35 real changes made)
+(35 real changes made)
+(46 real changes made)
+(15 real changes made)
+(15 real changes made)
+(0 real changes made)
+(3 real changes made)
+(0 real changes made)
+(1 real change made)
+(11 real changes made)
+(46 real changes made)
+(35 real changes made)
+(46 real changes made)
+(44 real changes made)
+(45 real changes made)
+(42 real changes made)
+(46 real changes made)
+(43 real changes made)
+(44 real changes made)
+(45 real changes made)
+(25 real changes made)
+(25 real changes made)
+(46 real changes made)
+(40 real changes made)
+(16 real changes made)
+(25 real changes made)
+(45 real changes made)
+(42 real changes made)
+(46 real changes made)
+(36 real changes made)
+(18 real changes made)
+(15 real changes made)
+(18 real changes made)
+(37 real changes made)
+(37 real changes made)
+(25 real changes made)
+(28 real changes made)
+(12 real changes made)
+(26 real changes made)
+(16 real changes made)
+(14 real changes made)
+(24 real changes made)
+(24 real changes made)
+(25 real changes made)
+(13 real changes made)
+(8 real changes made)
+(21 real changes made)
+(24 real changes made)
+(10 real changes made)
+(17 real changes made)
+(16 real changes made)
+(23 real changes made)
+(23 real changes made)
+(23 real changes made)
+(31 real changes made)
+(32 real changes made)
+(9 real changes made)
+(23 real changes made)
+(23 real changes made)
+(23 real changes made)
+(11 real changes made)
+(23 real changes made)
+(19 real changes made)
+(23 real changes made)
+(23 real changes made)
+(37 real changes made)
+(43 real changes made)
+(43 real changes made)
+(43 real changes made)
+(43 real changes made)
+(38 real changes made)
+(37 real changes made)
+(39 real changes made)
+(41 real changes made)
+(37 real changes made)
+(43 real changes made)
+(43 real changes made)
+(43 real changes made)
+(32 real changes made)
+(39 real changes made)
+(46 real changes made)
+(30 real changes made)
+(46 real changes made)
+(44 real changes made)
+(46 real changes made)
+(18 real changes made)
+(45 real changes made)
+(7 real changes made)
+
+. 
+. foreach var in `varlist' {
+  2.         drop `var'_sum
+  3. }
+
+. 
+. drop if (banks == "ABU DHABI COMMERCIAL BANK PJSC" |banks == "ALLAHABAD BANK" ///
+> |banks == "ANDHRA BANK" |banks == "BHARATIYA MAHILA BANK LTD."  ///
+> |banks == "CORPORATION BANK" |banks == "IDBI BANK LIMITED(055)" ///
+> |banks == "ING VYSYA BANK LTD" |banks == "LAKSHMI VILAS BANK LTD" ///
+> |banks == "ORIENTAL BANK OF COMMERCE" |banks == "STATE BANK OF BIKANER AND JAIPUR" ///
+> |banks == "STATE BANK OF HYDERABAD" |banks == "STATE BANK OF MYSORE" ///
+> |banks == "STATE BANK OF PATIALA" |banks == "STATE BANK OF TRAVANCORE" ///
+> |banks == "SYNDICATE BANK" |banks == "UNITED BANK OF INDIA" ///
+> |banks == "VIJAYA BANK" |banks == "WESTPAC BANKING CORPORATION")
+(828 observations deleted)
+
+. 
+. egen bank_num = group(banks)
+
+. xtset bank_num quarter_2
+
+Panel variable: bank_num (strongly balanced)
+ Time variable: quarter_2, 2012q2 to 2023q3
+         Delta: 1 quarter
+
+. spbalance 
+  (data strongly balanced)
+
+. gen type_bank = 1 if foreign_dummy == 1
+(2,426 missing values generated)
+
+. replace type_bank = 2 if private_dummy == 1
+(891 real changes made)
+
+. replace type_bank = 3 if public_dummy == 1
+(620 real changes made)
+
+. replace type_bank = 4 if small_finance_dummy == 1
+(253 real changes made)
+
+. 
+. gen gnpa_ratio = gross_npas/total_assets * 100
+(654 missing values generated)
+
+. 
+. *Fixing Sectors
+. replace food_cred_gnpa =. if food_cred_gadv ==. 
+(1,117 real changes made, 1,117 to missing)
+
+. replace nfc_gnp =. if nfc_gadv ==.
+(37 real changes made, 37 to missing)
+
+. replace agri_gnpa =. if agri_gadv ==. 
+(721 real changes made, 721 to missing)
+
+. replace ind_gnpa =. if ind_gadv ==. 
+(119 real changes made, 119 to missing)
+
+. replace serv_gnpa =. if serv_gadv ==. 
+(245 real changes made, 245 to missing)
+
+. replace retail_gnpa =. if retail_gadv ==. 
+(600 real changes made, 600 to missing)
+
+. replace onfc_gnpa =. if onfc_gadv ==. 
+(67 real changes made, 67 to missing)
+
+. replace house_gnpa =. if house_gadv ==. 
+(718 real changes made, 718 to missing)
+
+. replace auto_gnpa =. if auto_gadv ==. 
+(883 real changes made, 883 to missing)
+
+. replace cred_gnpa =. if cred_gadv ==. 
+(1,020 real changes made, 1,020 to missing)
+
+. replace edu_gnpa =. if edu_gadv ==. 
+(947 real changes made, 947 to missing)
+
+. replace oretail_gnpa =. if oretail_gadv ==. 
+(600 real changes made, 600 to missing)
+
+. 
+. *Fixing Priority
+. replace priority_gnpa =. if priority_gadv ==.
+(111 real changes made, 111 to missing)
+
+. replace non_priority_gnpa =. if non_priority_gadv ==.
+(50 real changes made, 50 to missing)
+
+. replace mse_gnpa =. if mse_gadv ==.
+(419 real changes made, 419 to missing)
+
+. replace other_priority_gnpa =. if other_priority_gadv ==.
+(111 real changes made, 111 to missing)
+
+. 
+. *Sector
+. gen fc_dummy = 1 if food_cred_gadv > nfc_gadv
+(2,713 missing values generated)
+
+. replace fc_dummy = 0 if fc_dummy ==.
+(2,713 real changes made)
+
+. 
+. gen agri_dummy = 1 if agri_gadv > ind_gadv & agri_gadv > serv_gadv & ///
+> agri_gadv > retail_gadv & agri_gadv > onfc_gadv
+(4,204 missing values generated)
+
+. replace agri_dummy = 0 if agri_dummy ==.
+(4,204 real changes made)
+
+. 
+. gen ind_dummy = 1 if ind_gadv > agri_gadv & ind_gadv > serv_gadv & ///
+> ind_gadv > retail_gadv & ind_gadv > onfc_gadv
+(3,670 missing values generated)
+
+. replace ind_dummy = 0 if ind_dummy ==.
+(3,670 real changes made)
+
+. 
+. gen serv_dummy = 1 if serv_gadv > agri_gadv & serv_gadv > ind_gadv & ///
+> serv_gadv > retail_gadv & serv_gadv > onfc_gadv
+(3,806 missing values generated)
+
+. replace serv_dummy = 0 if serv_dummy ==.
+(3,806 real changes made)
+
+. 
+. gen retail_dummy = 1 if retail_gadv > agri_gadv & retail_gadv > ind_gadv & ///
+> retail_gadv > serv_gadv & retail_gadv > onfc_gadv
+(4,003 missing values generated)
+
+. replace retail_dummy = 0 if retail_dummy ==.
+(4,003 real changes made)
+
+. 
+. gen onfc_dummy = 1 if onfc_gadv > agri_gadv & onfc_gadv > ind_gadv & ///
+> onfc_gadv > serv_gadv & onfc_gadv > retail_gadv
+(3,745 missing values generated)
+
+. replace onfc_dummy = 0 if onfc_dummy ==.
+(3,745 real changes made)
+
+. 
+. *Priority
+. gen npri_dummy = 1 if non_priority_gadv > priority_gadv
+(1,410 missing values generated)
+
+. replace npri_dummy = 0 if npri_dummy ==.
+(1,410 real changes made)
+
+. 
+. gen mse_dummy = 1 if mse_gadv > other_priority_gadv
+(2,260 missing values generated)
+
+. replace mse_dummy = 0 if mse_dummy ==.
+(2,260 real changes made)
+
+. 
+. gen opri_dummy = 1 if other_priority_gadv > mse_gadv
+(2,972 missing values generated)
+
+. replace opri_dummy = 0 if opri_dummy ==.
+(2,972 real changes made)
+
+. 
+. *Infrastructure
+. gen trans_dummy = 1 if transport > energy & transport > water_sanitation & ///
+> transport > communication & transport > soc_comm_infra
+(4,219 missing values generated)
+
+. replace trans_dummy = 0 if trans_dummy ==.
+(4,219 real changes made)
+
+. 
+. gen energy_dummy = 1 if energy > transport & energy > water_sanitation & ///
+> energy > communication & energy > soc_comm_infra
+(3,723 missing values generated)
+
+. replace energy_dummy = 0 if energy_dummy ==.
+(3,723 real changes made)
+
+. 
+. gen water_dummy = 1 if water_sanitation > transport & water_sanitation > energy & ///
+> water_sanitation > communication & water_sanitation > soc_comm_infra
+(4,283 missing values generated)
+
+. replace water_dummy = 0 if water_dummy ==.
+(4,283 real changes made)
+
+. 
+. gen comm_dummy = 1 if communication > transport & communication > energy & ///
+> communication > water_sanitation & communication > soc_comm_infra
+(3,435 missing values generated)
+
+. replace comm_dummy = 0 if comm_dummy ==.
+(3,435 real changes made)
+
+. 
+. gen soc_comm_dummy = 1 if soc_comm_infra > transport & soc_comm_infra > energy & ///
+> soc_comm_infra > water_sanitation & soc_comm_infra > communication
+(4,194 missing values generated)
+
+. replace soc_comm_dummy = 0 if soc_comm_dummy ==.
+(4,194 real changes made)
+
+. 
+. *Sector2
+. egen sum_sec_gadv = rowtotal(food_cred_gadv agri_gadv ind_gadv serv_gadv retail_gadv onfc_ga
+> dv)
+
+. replace sum_sec_gadv =. if sum_sec_gadv == 0
+(902 real changes made, 902 to missing)
+
+. 
+. gen food_ratio = food_cred_gadv/sum_sec_gadv
+(2,477 missing values generated)
+
+. gen agri_ratio = agri_gadv/sum_sec_gadv
+(2,081 missing values generated)
+
+. gen ind_ratio = ind_gadv/sum_sec_gadv
+(1,480 missing values generated)
+
+. gen serv_ratio = serv_gadv/sum_sec_gadv
+(1,215 missing values generated)
+
+. gen retail_ratio = retail_gadv/sum_sec_gadv
+(1,465 missing values generated)
+
+. gen onfc_ratio = onfc_gadv/sum_sec_gadv
+(2,597 missing values generated)
+
+. 
+. bysort quarter_2: egen food_ratio_med = median(food_ratio)
+
+. bysort quarter_2: egen agri_ratio_med = median(agri_ratio)
+
+. bysort quarter_2: egen ind_ratio_med = median(ind_ratio)
+
+. bysort quarter_2: egen serv_ratio_med = median(serv_ratio)
+
+. bysort quarter_2: egen retail_ratio_med = median(retail_ratio)
+
+. bysort quarter_2: egen onfc_ratio_med = median(onfc_ratio)
+
+. 
+. gen fc_dummy2 = 1 if food_ratio >= food_ratio_med
+(618 missing values generated)
+
+. replace fc_dummy2 = 0 if food_ratio < food_ratio_med
+(618 real changes made)
+
+. // replace fc_dummy2 = 0 if food_ratio ==.
+. replace fc_dummy2 = . if food_ratio ==. & agri_ratio ==. & ind_ratio ==. & ///
+> serv_ratio ==. & onfc_ratio ==.
+(1,045 real changes made, 1,045 to missing)
+
+. 
+. gen agri_dummy2 = 1 if agri_ratio >= agri_ratio_med
+(1,066 missing values generated)
+
+. replace agri_dummy2 = 0 if agri_ratio < agri_ratio_med
+(1,066 real changes made)
+
+. // replace agri_dummy2 = 0 if agri_ratio ==.
+. replace agri_dummy2 = . if food_ratio ==. & agri_ratio ==. & ind_ratio ==. & ///
+> serv_ratio ==. & onfc_ratio ==.
+(1,045 real changes made, 1,045 to missing)
+
+. 
+. gen ind_dummy2 = 1 if ind_ratio >= ind_ratio_med
+(1,364 missing values generated)
+
+. replace ind_dummy2 = 0 if ind_ratio < ind_ratio_med
+(1,364 real changes made)
+
+. // replace ind_dummy2 = 0 if ind_ratio ==.
+. replace ind_dummy2 = . if food_ratio ==. & agri_ratio ==. & ind_ratio ==. & ///
+> serv_ratio ==. & onfc_ratio ==.
+(1,045 real changes made, 1,045 to missing)
+
+. 
+. gen serv_dummy2 = 1 if serv_ratio >= serv_ratio_med
+(1,349 missing values generated)
+
+. replace serv_dummy2 = 0 if serv_ratio < serv_ratio_med
+(1,349 real changes made)
+
+. // replace serv_dummy2 = 0 if serv_ratio ==.
+. replace serv_dummy2 = . if food_ratio ==. & agri_ratio ==. & ind_ratio ==. & ///
+> serv_ratio ==. & onfc_ratio ==.
+(1,045 real changes made, 1,045 to missing)
+
+. 
+. gen retail_dummy2 = 1 if retail_ratio >= retail_ratio_med
+(1,373 missing values generated)
+
+. replace retail_dummy2 = 0 if retail_ratio < retail_ratio_med
+(1,373 real changes made)
+
+. // replace retail_dummy2 = 0 if retail_ratio ==.
+. replace retail_dummy2 = . if food_ratio ==. & agri_ratio ==. & ind_ratio ==. & ///
+> serv_ratio ==. & onfc_ratio ==.
+(1,045 real changes made, 1,045 to missing)
+
+. 
+. gen onfc_dummy2 = 1 if onfc_ratio >= onfc_ratio_med
+(561 missing values generated)
+
+. replace onfc_dummy2 = 0 if onfc_ratio < onfc_ratio_med
+(561 real changes made)
+
+. // replace onfc_dummy2 = 0 if onfc_ratio ==.
+. replace onfc_dummy2 = . if food_ratio ==. & agri_ratio ==. & ind_ratio ==. & ///
+> serv_ratio ==. & onfc_ratio ==.
+(1,045 real changes made, 1,045 to missing)
+
+. 
+. 
+. *Priority2
+. egen sum_pri_gadv = rowtotal(non_priority_gadv mse_gadv other_priority_gadv)
+
+. replace sum_pri_gadv =. if sum_pri_gadv == 0
+(727 real changes made, 727 to missing)
+
+. 
+. bysort quarter_2: gen npri_ratio = non_priority_gadv/sum_pri_gadv
+(743 missing values generated)
+
+. bysort quarter_2: gen mse_ratio = mse_gadv/sum_pri_gadv
+(1,108 missing values generated)
+
+. bysort quarter_2: gen opri_ratio = other_priority_gadv/sum_pri_gadv
+(801 missing values generated)
+
+. 
+. egen npri_ratio_med = median(npri_ratio)
+
+. egen mse_ratio_med = median(mse_ratio)
+
+. egen opri_ratio_med = median(opri_ratio)
+
+. 
+. gen npri_dummy2 = 1 if npri_ratio >= npri_ratio_med
+(1,790 missing values generated)
+
+. replace npri_dummy2 = 0 if npri_ratio < npri_ratio_med
+(1,790 real changes made)
+
+. // replace npri_dummy2 = 0 if npri_ratio ==.
+. replace npri_dummy2 = . if npri_ratio ==. & mse_ratio ==. & opri_ratio ==.
+(727 real changes made, 727 to missing)
+
+. 
+. gen mse_dummy2 = 1 if mse_ratio >= mse_ratio_med
+(1,608 missing values generated)
+
+. replace mse_dummy2 = 0 if mse_ratio < mse_ratio_med
+(1,608 real changes made)
+
+. // replace mse_dummy2 = 0 if mse_ratio ==.
+. replace mse_dummy2 = . if npri_ratio ==. & mse_ratio ==. & opri_ratio ==.
+(727 real changes made, 727 to missing)
+
+. 
+. gen opri_dummy2 = 1 if opri_ratio >= opri_ratio_med
+(1,761 missing values generated)
+
+. replace opri_dummy2 = 0 if opri_ratio < opri_ratio_med
+(1,761 real changes made)
+
+. // replace opri_dummy2 = 0 if opri_ratio ==.
+. replace opri_dummy2 = . if npri_ratio ==. & mse_ratio ==. & opri_ratio ==.
+(727 real changes made, 727 to missing)
+
+. 
+. *Infrastructure2
+. egen sum_infra_gadv = rowtotal(transport energy water_sanitation communication soc_comm_infr
+> a)
+
+. replace sum_infra_gadv = . if sum_infra_gadv == 0
+(2,392 real changes made, 2,392 to missing)
+
+. 
+. gen trans_ratio = transport/sum_infra_gadv
+(2,609 missing values generated)
+
+. gen energy_ratio = energy/sum_infra_gadv
+(2,541 missing values generated)
+
+. gen water_san_ratio = water_sanitation/sum_infra_gadv
+(2,728 missing values generated)
+
+. gen comm_ratio = communication/sum_infra_gadv
+(3,211 missing values generated)
+
+. gen soc_comm_ratio = soc_comm_infra/sum_infra_gadv
+(2,739 missing values generated)
+
+. 
+. bysort quarter_2: egen trans_ratio_med = median(trans_ratio)
+(658 missing values generated)
+
+. bysort quarter_2: egen energy_ratio_med = median(energy_ratio)
+(658 missing values generated)
+
+. bysort quarter_2: egen water_san_ratio_med = median(water_san_ratio)
+(658 missing values generated)
+
+. bysort quarter_2: egen comm_ratio_med = median(comm_ratio)
+(658 missing values generated)
+
+. bysort quarter_2: egen soc_comm_ratio_med = median(soc_comm_ratio)
+(658 missing values generated)
+
+. 
+. gen trans_dummy2 = 1 if trans_ratio >= trans_ratio_med
+(796 missing values generated)
+
+. replace trans_dummy2 = 0 if trans_ratio < trans_ratio_med
+(796 real changes made)
+
+. // replace trans_dummy2 = 0 if trans_ratio ==.
+. replace trans_dummy2 = . if trans_ratio ==. & energy_ratio ==. & ///
+> water_san_ratio ==. & comm_ratio ==. & soc_comm_dummy ==.
+(0 real changes made)
+
+. 
+. gen energy_dummy2 = 1 if energy_ratio >= energy_ratio_med
+(882 missing values generated)
+
+. replace energy_dummy2 = 0 if energy_ratio < energy_ratio_med
+(882 real changes made)
+
+. // replace energy_dummy2 = 0 if energy_ratio ==.
+. replace energy_dummy2 = . if trans_ratio ==. & energy_ratio ==. & ///
+> water_san_ratio ==. & comm_ratio ==. & soc_comm_dummy ==.
+(0 real changes made)
+
+. 
+. gen water_dummy2 = 1 if water_san_ratio >= water_san_ratio_med
+(538 missing values generated)
+
+. replace water_dummy2 = 0 if water_san_ratio < water_san_ratio_med
+(538 real changes made)
+
+. // replace water_dummy2 = 0 if water_san_ratio ==.
+. replace water_dummy2 = . if trans_ratio ==. & energy_ratio ==. & ///
+> water_san_ratio ==. & comm_ratio ==. & soc_comm_dummy ==.
+(0 real changes made)
+
+. 
+. gen comm_dummy2 = 1 if comm_ratio >= comm_ratio_med
+(335 missing values generated)
+
+. replace comm_dummy2 = 0 if comm_ratio < comm_ratio_med
+(335 real changes made)
+
+. // replace comm_dummy2 = 0 if comm_ratio ==.
+. replace comm_dummy2 = . if trans_ratio ==. & energy_ratio ==. & ///
+> water_san_ratio ==. & comm_ratio ==. & soc_comm_dummy ==.
+(0 real changes made)
+
+. 
+. gen soc_comm_dummy2 = 1 if soc_comm_ratio >= soc_comm_ratio_med
+(529 missing values generated)
+
+. replace soc_comm_dummy2 = 0 if soc_comm_ratio < soc_comm_ratio_med
+(529 real changes made)
+
+. // replace soc_comm_dummy2 = 0 if soc_comm_ratio ==.
+. replace soc_comm_dummy2 = . if trans_ratio ==. & energy_ratio ==. & ///
+> water_san_ratio ==. & comm_ratio ==. & soc_comm_dummy ==.
+(0 real changes made)
+
+. 
+. 
+. *Sector3
+. egen sec_tot = rowtotal(food_cred_gadv agri_gadv ind_gadv serv_gadv retail_gadv ///
+> onfc_gadv)
+
+. 
+. gen food_ratio2 = food_cred_gadv/sec_tot
+(2,477 missing values generated)
+
+. gen agri_ratio2 = agri_gadv/sec_tot
+(2,081 missing values generated)
+
+. gen ind_ratio2 = ind_gadv/sec_tot
+(1,480 missing values generated)
+
+. gen serv_ratio2 = serv_gadv/sec_tot
+(1,215 missing values generated)
+
+. gen retail_ratio2 = retail_gadv/sec_tot
+(1,465 missing values generated)
+
+. gen onfc_ratio2 = onfc_gadv/sec_tot
+(2,597 missing values generated)
+
+. 
+. gen fc_dummy3 = 1 if food_ratio2 > agri_ratio2 & food_ratio2 > ind_ratio2 & ///
+> food_ratio2 > serv_ratio2 & food_ratio2 > retail_ratio2 & food_ratio2 > onfc_ratio2
+(4,207 missing values generated)
+
+. replace fc_dummy3 = 0 if fc_dummy3 ==.
+(4,207 real changes made)
+
+. replace fc_dummy3 =. if food_cred_gadv ==. | agri_gadv ==. | ind_gadv ==. | ///
+> serv_gadv ==. | retail_gadv ==.
+(2,529 real changes made, 2,529 to missing)
+
+. 
+. gen agri_dummy3 = 1 if agri_ratio2 > food_ratio2 & agri_ratio2 > ind_ratio2 & ///
+> agri_ratio2 > serv_ratio2 & agri_ratio2 > retail_ratio2 & agri_ratio2 > onfc_ratio2
+(4,269 missing values generated)
+
+. replace agri_dummy3 = 0 if agri_dummy3 ==.
+(4,269 real changes made)
+
+. replace agri_dummy3 =. if food_cred_gadv ==. | agri_gadv ==. | ind_gadv ==. | ///
+> serv_gadv ==. | retail_gadv ==.
+(2,529 real changes made, 2,529 to missing)
+
+. 
+. gen ind_dummy3 = 1 if ind_ratio2 > food_ratio2 & ind_ratio2 > agri_ratio2 & ///
+> ind_ratio2 > serv_ratio2 & ind_ratio2 > retail_ratio2 & ind_ratio2 > onfc_ratio2
+(3,699 missing values generated)
+
+. replace ind_dummy3 = 0 if ind_dummy3 ==.
+(3,699 real changes made)
+
+. replace ind_dummy3 =. if food_cred_gadv ==. | agri_gadv ==. | ind_gadv ==. | ///
+> serv_gadv ==. | retail_gadv ==.
+(2,529 real changes made, 2,529 to missing)
+
+. 
+. gen serv_dummy3 = 1 if serv_ratio2 > food_ratio2 & serv_ratio2 > agri_ratio2 & ///
+> serv_ratio2 > ind_ratio2 & serv_ratio2 > retail_ratio2 & serv_ratio2 > onfc_ratio2
+(3,851 missing values generated)
+
+. replace serv_dummy3 = 0 if serv_dummy3 ==.
+(3,851 real changes made)
+
+. replace serv_dummy3 =. if food_cred_gadv ==. | agri_gadv ==. | ind_gadv ==. | ///
+> serv_gadv ==. | retail_gadv ==.
+(2,529 real changes made, 2,529 to missing)
+
+. 
+. gen retail_dummy3 = 1 if retail_ratio2 > food_ratio2 & retail_ratio2 > agri_ratio2 & ///
+> retail_ratio2 > ind_ratio2 & retail_ratio2 > serv_ratio2 & retail_ratio2 > onfc_ratio2
+(4,046 missing values generated)
+
+. replace retail_dummy3 = 0 if retail_dummy3 ==.
+(4,046 real changes made)
+
+. replace retail_dummy3 =. if food_cred_gadv ==. | agri_gadv ==. | ind_gadv ==. | ///
+> serv_gadv ==. | retail_gadv ==.
+(2,529 real changes made, 2,529 to missing)
+
+. 
+. gen onfc_dummy3 = 1 if onfc_ratio2 > food_ratio2 & onfc_ratio2 > agri_ratio2 & ///
+> onfc_ratio2 > ind_ratio2 & onfc_ratio2 > serv_ratio2 & onfc_ratio2 > retail_ratio2
+(3,961 missing values generated)
+
+. replace onfc_dummy3 = 0 if onfc_dummy3 ==.
+(3,961 real changes made)
+
+. replace onfc_dummy3 =. if food_cred_gadv ==. | agri_gadv ==. | ind_gadv ==. | ///
+> serv_gadv ==. | retail_gadv ==. | onfc_gadv ==.
+(2,879 real changes made, 2,879 to missing)
+
+. 
+. *food cred has all 0s
+. 
+. *Priority3
+. egen pri_tot = rowtotal(non_priority_gnpa mse_gadv other_priority_gadv)
+
+. 
+. gen npri_ratio2 = non_priority_gnpa/pri_tot
+(854 missing values generated)
+
+. gen mse_ratio2 = mse_gadv/pri_tot
+(1,175 missing values generated)
+
+. gen opri_ratio2 = other_priority_gadv/pri_tot
+(870 missing values generated)
+
+. 
+. gen npri_dummy3 = 1 if npri_ratio2 > mse_ratio2 & npri_ratio2 > opri_ratio2
+(4,186 missing values generated)
+
+. replace npri_dummy3 = 0 if npri_dummy3 ==.
+(4,186 real changes made)
+
+. replace npri_dummy3 =. if non_priority_gadv ==. | mse_gadv ==. | other_priority_gadv ==.
+(1,080 real changes made, 1,080 to missing)
+
+. 
+. gen mse_dummy3 = 1 if mse_ratio2 > npri_ratio2 & mse_ratio2 > opri_ratio2
+(2,332 missing values generated)
+
+. replace mse_dummy3 = 0 if mse_dummy3 ==.
+(2,332 real changes made)
+
+. replace mse_dummy3 =. if non_priority_gadv ==. | mse_gadv ==. | other_priority_gadv ==.
+(1,080 real changes made, 1,080 to missing)
+
+. 
+. gen opri_dummy3 = 1 if opri_ratio2 > npri_ratio2 & opri_ratio2 > mse_ratio2
+(3,010 missing values generated)
+
+. replace opri_dummy3 = 0 if opri_dummy3 ==.
+(3,010 real changes made)
+
+. replace opri_dummy3 =. if non_priority_gadv ==. | mse_gadv ==. | other_priority_gadv ==.
+(1,080 real changes made, 1,080 to missing)
+
+. 
+. *Infrastructure3
+. egen tot_infra = rowtotal(transport energy water_sanitation communication soc_comm_infra)
+
+. 
+. gen trans_ratio2 = transport/tot_infra
+(2,609 missing values generated)
+
+. gen energy_ratio2 = energy/tot_infra
+(2,541 missing values generated)
+
+. gen water_san_ratio2 = water_sanitation/tot_infra
+(2,728 missing values generated)
+
+. gen comm_ratio2 = communication/tot_infra
+(3,211 missing values generated)
+
+. gen soc_comm_ratio2 = soc_comm_infra/tot_infra
+(2,739 missing values generated)
+
+. 
+. gen trans_dummy3 = 1 if trans_ratio2 > energy_ratio2 & trans_ratio2 > water_san_ratio2 & ///
+> trans_ratio2 > comm_ratio2 & trans_ratio2 > soc_comm_ratio2
+(4,220 missing values generated)
+
+. replace trans_dummy3 = 0 if trans_dummy3 ==.
+(4,220 real changes made)
+
+. replace trans_dummy3 = . if transport ==. | energy ==. | water_sanitation ==. | ///
+> communication ==. | soc_comm_infra ==.
+(3,232 real changes made, 3,232 to missing)
+
+. 
+. gen energy_dummy3 = 1 if energy_ratio2 > trans_ratio2 & energy_ratio2 > water_san_ratio2 & /
+> //
+> energy_ratio2 > comm_ratio2 & energy_ratio2 > soc_comm_ratio2
+(3,723 missing values generated)
+
+. replace energy_dummy3 = 0 if energy_dummy3 ==.
+(3,723 real changes made)
+
+. replace energy_dummy3 = . if transport ==. | energy ==. | water_sanitation ==. | ///
+> communication ==. | soc_comm_infra ==.
+(3,232 real changes made, 3,232 to missing)
+
+. 
+. gen water_dummy3 = 1 if water_san_ratio2 > trans_ratio2 & water_san_ratio2 > energy_ratio2 &
+>  ///
+> water_san_ratio2 > comm_ratio2 & water_san_ratio2 > soc_comm_ratio2
+(4,283 missing values generated)
+
+. replace water_dummy3 = 0 if water_dummy3 ==.
+(4,283 real changes made)
+
+. replace water_dummy3 = . if transport ==. | energy ==. | water_sanitation ==. | ///
+> communication ==. | soc_comm_infra ==.
+(3,232 real changes made, 3,232 to missing)
+
+. 
+. gen comm_dummy3 = 1 if comm_ratio2 > trans_ratio2 & comm_ratio2 > energy_ratio2 & ///
+> comm_ratio2 > water_san_ratio2 & comm_ratio2 > soc_comm_ratio2
+(3,658 missing values generated)
+
+. replace comm_dummy3 = 0 if comm_dummy3 ==.
+(3,658 real changes made)
+
+. replace comm_dummy3 = . if transport ==. | energy ==. | water_sanitation ==. | ///
+> communication ==. | soc_comm_infra ==.
+(3,232 real changes made, 3,232 to missing)
+
+. 
+. gen soc_comm_dummy3 = 1 if soc_comm_ratio2 > trans_ratio2 & soc_comm_ratio2 > energy_ratio2 
+> & ///
+> soc_comm_ratio2 > water_san_ratio2 & soc_comm_ratio2 > comm_ratio2
+(4,195 missing values generated)
+
+. replace soc_comm_dummy3 = 0 if soc_comm_dummy3 ==.
+(4,195 real changes made)
+
+. replace soc_comm_dummy3 = . if transport ==. | energy ==. | water_sanitation ==. | ///
+> communication ==. | soc_comm_infra ==.
+(3,232 real changes made, 3,232 to missing)
+
+. 
+. *Region
+. merge m:1 banks using "Stata/Branches Cov/state_dummies_cov.dta"
+(variable banks was str47, now str57 to accommodate using data's values)
+
+    Result                      Number of obs
+    -----------------------------------------
+    Not matched                         2,197
+        from master                     1,242  (_merge==1)
+        from using                        955  (_merge==2)
+
+    Matched                             3,082  (_merge==3)
+    -----------------------------------------
+
+. drop if _merge == 2
+(955 observations deleted)
+
+. sort banks quarter_2
+
+. 
+. save "Stata/Merged Cov/bank_vars_all_cov.dta", replace
+file Stata/Merged Cov/bank_vars_all_cov.dta saved
+
+. 
+. use "Stata/Merged Cov/bank_vars_all_cov.dta", clear
+
+. browse if type_bank ==.
+
+. 
+. replace foreign_dummy = 1 if banks == "ABU DHABI COMMERCIAL BANK PJSC"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "ABU DHABI COMMERCIAL BANK PJSC"
+(0 real changes made)
+
+. replace public_dummy = 0 if banks == "ABU DHABI COMMERCIAL BANK PJSC"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "ABU DHABI COMMERCIAL BANK PJSC"
+(0 real changes made)
+
+. replace type_bank = 1 if banks == "ABU DHABI COMMERCIAL BANK PJSC"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "AU SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace private_dummy = 0 if banks == "AU SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace public_dummy = 0 if banks == "AU SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "AU SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace type_bank = 4 if banks == "AU SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "BANDHAN BANK LIMITED"
+(15 real changes made)
+
+. replace private_dummy = 1 if banks == "BANDHAN BANK LIMITED"
+(15 real changes made)
+
+. replace public_dummy = 0 if banks == "BANDHAN BANK LIMITED"
+(15 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "BANDHAN BANK LIMITED"
+(15 real changes made)
+
+. replace type_bank = 2 if banks == "BANDHAN BANK LIMITED"
+(15 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "BANK OF CHINA LIMITED"
+(29 real changes made)
+
+. replace private_dummy = 0 if banks == "BANK OF CHINA LIMITED"
+(29 real changes made)
+
+. replace public_dummy = 0 if banks == "BANK OF CHINA LIMITED"
+(29 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "BANK OF CHINA LIMITED"
+(29 real changes made)
+
+. replace type_bank = 1 if banks == "BANK OF CHINA LIMITED"
+(29 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "BHARATIYA MAHILA BANK LTD."
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "BHARATIYA MAHILA BANK LTD."
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "BHARATIYA MAHILA BANK LTD."
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "BHARATIYA MAHILA BANK LTD."
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "BHARATIYA MAHILA BANK LTD."
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "CAPITAL SMALL FINANCE BANK LIMITED"
+(18 real changes made)
+
+. replace private_dummy = 0 if banks == "CAPITAL SMALL FINANCE BANK LIMITED"
+(18 real changes made)
+
+. replace public_dummy = 0 if banks == "CAPITAL SMALL FINANCE BANK LIMITED"
+(18 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "CAPITAL SMALL FINANCE BANK LIMITED"
+(18 real changes made)
+
+. replace type_bank = 4 if banks == "CAPITAL SMALL FINANCE BANK LIMITED"
+(18 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "COMMONWEALTH BANK OF AUSTRALIA"
+(25 real changes made)
+
+. replace private_dummy = 0 if banks == "COMMONWEALTH BANK OF AUSTRALIA"
+(25 real changes made)
+
+. replace public_dummy = 0 if banks == "COMMONWEALTH BANK OF AUSTRALIA"
+(25 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "COMMONWEALTH BANK OF AUSTRALIA"
+(25 real changes made)
+
+. replace type_bank = 1 if banks == "COMMONWEALTH BANK OF AUSTRALIA"
+(25 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "DENA BANK"
+(19 real changes made)
+
+. replace private_dummy = 0 if banks == "DENA BANK"
+(19 real changes made)
+
+. replace public_dummy = 1 if banks == "DENA BANK"
+(19 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "DENA BANK"
+(19 real changes made)
+
+. replace type_bank = 3 if banks == "DENA BANK"
+(19 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "DOHA BANK Q.P.S.C"
+(12 real changes made)
+
+. replace private_dummy = 0 if banks == "DOHA BANK Q.P.S.C"
+(12 real changes made)
+
+. replace public_dummy = 0 if banks == "DOHA BANK Q.P.S.C"
+(12 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "DOHA BANK Q.P.S.C"
+(12 real changes made)
+
+. replace type_bank = 1 if banks == "DOHA BANK Q.P.S.C"
+(12 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "EMIRATES NBD BANK (P.J.S.C.)"
+(21 real changes made)
+
+. replace private_dummy = 0 if banks == "EMIRATES NBD BANK (P.J.S.C.)"
+(21 real changes made)
+
+. replace public_dummy = 0 if banks == "EMIRATES NBD BANK (P.J.S.C.)"
+(21 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "EMIRATES NBD BANK (P.J.S.C.)"
+(21 real changes made)
+
+. replace type_bank = 1 if banks == "EMIRATES NBD BANK (P.J.S.C.)"
+(21 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "EQUITAS SMALL FINANCE BANK LIMITED"
+(18 real changes made)
+
+. replace private_dummy = 0 if banks == "EQUITAS SMALL FINANCE BANK LIMITED"
+(18 real changes made)
+
+. replace public_dummy = 0 if banks == "EQUITAS SMALL FINANCE BANK LIMITED"
+(18 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "EQUITAS SMALL FINANCE BANK LIMITED"
+(18 real changes made)
+
+. replace type_bank = 4 if banks == "EQUITAS SMALL FINANCE BANK LIMITED"
+(18 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "ESAF SMALL FINANCE BANK LIMITED"
+(19 real changes made)
+
+. replace private_dummy = 0 if banks == "ESAF SMALL FINANCE BANK LIMITED"
+(19 real changes made)
+
+. replace public_dummy = 0 if banks == "ESAF SMALL FINANCE BANK LIMITED"
+(19 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "ESAF SMALL FINANCE BANK LIMITED"
+(19 real changes made)
+
+. replace type_bank = 4 if banks == "ESAF SMALL FINANCE BANK LIMITED"
+(19 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "FINCARE SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace private_dummy = 0 if banks == "FINCARE SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace public_dummy = 0 if banks == "FINCARE SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "FINCARE SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace type_bank = 4 if banks == "FINCARE SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "FIRST ABU DHABI BANK PJSC"
+(15 real changes made)
+
+. replace private_dummy = 0 if banks == "FIRST ABU DHABI BANK PJSC"
+(15 real changes made)
+
+. replace public_dummy = 0 if banks == "FIRST ABU DHABI BANK PJSC"
+(15 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "FIRST ABU DHABI BANK PJSC"
+(15 real changes made)
+
+. replace type_bank = 1 if banks == "FIRST ABU DHABI BANK PJSC"
+(15 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "HSBC BANK OMAN S.A.O.G."
+(34 real changes made)
+
+. replace private_dummy = 0 if banks == "HSBC BANK OMAN S.A.O.G."
+(34 real changes made)
+
+. replace public_dummy = 0 if banks == "HSBC BANK OMAN S.A.O.G."
+(34 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "HSBC BANK OMAN S.A.O.G."
+(34 real changes made)
+
+. replace type_bank = 1 if banks == "HSBC BANK OMAN S.A.O.G."
+(34 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "IDFC FIRST BANK LIMITED"
+(14 real changes made)
+
+. replace private_dummy = 1 if banks == "IDFC FIRST BANK LIMITED"
+(14 real changes made)
+
+. replace public_dummy = 0 if banks == "IDFC FIRST BANK LIMITED"
+(14 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "IDFC FIRST BANK LIMITED"
+(14 real changes made)
+
+. replace type_bank = 2 if banks == "IDFC FIRST BANK LIMITED"
+(14 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "INDUSTRIAL BANK OF KOREA"
+(13 real changes made)
+
+. replace private_dummy = 0 if banks == "INDUSTRIAL BANK OF KOREA"
+(13 real changes made)
+
+. replace public_dummy = 0 if banks == "INDUSTRIAL BANK OF KOREA"
+(13 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "INDUSTRIAL BANK OF KOREA"
+(13 real changes made)
+
+. replace type_bank = 1 if banks == "INDUSTRIAL BANK OF KOREA"
+(13 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "ING VYSYA BANK LTD"
+(0 real changes made)
+
+. replace private_dummy = 1 if banks == "ING VYSYA BANK LTD"
+(0 real changes made)
+
+. replace public_dummy = 0 if banks == "ING VYSYA BANK LTD"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "ING VYSYA BANK LTD"
+(0 real changes made)
+
+. replace type_bank = 2 if banks == "ING VYSYA BANK LTD"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "JANA SMALL FINANCE BANK LIMITED"
+(23 real changes made)
+
+. replace private_dummy = 0 if banks == "JANA SMALL FINANCE BANK LIMITED"
+(23 real changes made)
+
+. replace public_dummy = 0 if banks == "JANA SMALL FINANCE BANK LIMITED"
+(23 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "JANA SMALL FINANCE BANK LIMITED"
+(23 real changes made)
+
+. replace type_bank = 4 if banks == "JANA SMALL FINANCE BANK LIMITED"
+(23 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "KBC BANK NV"
+(30 real changes made)
+
+. replace private_dummy = 0 if banks == "KBC BANK NV"
+(30 real changes made)
+
+. replace public_dummy = 0 if banks == "KBC BANK NV"
+(30 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "KBC BANK NV"
+(30 real changes made)
+
+. replace type_bank = 1 if banks == "KBC BANK NV"
+(30 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "KEB HANA BANK"
+(15 real changes made)
+
+. replace private_dummy = 0 if banks == "KEB HANA BANK"
+(15 real changes made)
+
+. replace public_dummy = 0 if banks == "KEB HANA BANK"
+(15 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "KEB HANA BANK"
+(15 real changes made)
+
+. replace type_bank = 1 if banks == "KEB HANA BANK"
+(15 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "KOOKMIN BANK"
+(29 real changes made)
+
+. replace private_dummy = 0 if banks == "KOOKMIN BANK"
+(29 real changes made)
+
+. replace public_dummy = 0 if banks == "KOOKMIN BANK"
+(29 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "KOOKMIN BANK"
+(29 real changes made)
+
+. replace type_bank = 1 if banks == "KOOKMIN BANK"
+(29 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "KOTAK MAHINDRA BANK LTD."
+(1 real change made)
+
+. replace private_dummy = 1 if banks == "KOTAK MAHINDRA BANK LTD."
+(1 real change made)
+
+. replace public_dummy = 0 if banks == "KOTAK MAHINDRA BANK LTD."
+(1 real change made)
+
+. replace small_finance_dummy = 0 if banks == "KOTAK MAHINDRA BANK LTD."
+(1 real change made)
+
+. replace type_bank = 2 if banks == "KOTAK MAHINDRA BANK LTD."
+(1 real change made)
+
+. 
+. replace foreign_dummy = 1 if banks == "NATIONAL AUSTRALIA BANK"
+(17 real changes made)
+
+. replace private_dummy = 0 if banks == "NATIONAL AUSTRALIA BANK"
+(17 real changes made)
+
+. replace public_dummy = 0 if banks == "NATIONAL AUSTRALIA BANK"
+(17 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "NATIONAL AUSTRALIA BANK"
+(17 real changes made)
+
+. replace type_bank = 1 if banks == "NATIONAL AUSTRALIA BANK"
+(17 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "NORTH EAST SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace private_dummy = 0 if banks == "NORTH EAST SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace public_dummy = 0 if banks == "NORTH EAST SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "NORTH EAST SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace type_bank = 4 if banks == "NORTH EAST SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "PT BANK MAYBANK INDONESIA TBK"
+(5 real changes made)
+
+. replace private_dummy = 0 if banks == "PT BANK MAYBANK INDONESIA TBK"
+(5 real changes made)
+
+. replace public_dummy = 0 if banks == "PT BANK MAYBANK INDONESIA TBK"
+(5 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "PT BANK MAYBANK INDONESIA TBK"
+(5 real changes made)
+
+. replace type_bank = 1 if banks == "PT BANK MAYBANK INDONESIA TBK"
+(5 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "Qatar National Bank (Q.P.S.C.)"
+(20 real changes made)
+
+. replace private_dummy = 0 if banks == "Qatar National Bank (Q.P.S.C.)"
+(20 real changes made)
+
+. replace public_dummy = 0 if banks == "Qatar National Bank (Q.P.S.C.)"
+(20 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "Qatar National Bank (Q.P.S.C.)"
+(20 real changes made)
+
+. replace type_bank = 1 if banks == "Qatar National Bank (Q.P.S.C.)"
+(20 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "STATE BANK OF BIKANER AND JAIPUR"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "STATE BANK OF BIKANER AND JAIPUR"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "STATE BANK OF BIKANER AND JAIPUR"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "STATE BANK OF BIKANER AND JAIPUR"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "STATE BANK OF BIKANER AND JAIPUR"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "STATE BANK OF HYDERABAD"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "STATE BANK OF HYDERABAD"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "STATE BANK OF HYDERABAD"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "STATE BANK OF HYDERABAD"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "STATE BANK OF HYDERABAD"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "STATE BANK OF MYSORE"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "STATE BANK OF MYSORE"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "STATE BANK OF MYSORE"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "STATE BANK OF MYSORE"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "STATE BANK OF MYSORE"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "STATE BANK OF PATIALA"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "STATE BANK OF PATIALA"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "STATE BANK OF PATIALA"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "STATE BANK OF PATIALA"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "STATE BANK OF PATIALA"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "STATE BANK OF TRAVANCORE"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "STATE BANK OF TRAVANCORE"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "STATE BANK OF TRAVANCORE"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "STATE BANK OF TRAVANCORE"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "STATE BANK OF TRAVANCORE"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "SUMITOMO MITSUI BANKING CORPORATION"
+(3 real changes made)
+
+. replace private_dummy = 0 if banks == "SUMITOMO MITSUI BANKING CORPORATION"
+(3 real changes made)
+
+. replace public_dummy = 0 if banks == "SUMITOMO MITSUI BANKING CORPORATION"
+(3 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "SUMITOMO MITSUI BANKING CORPORATION"
+(3 real changes made)
+
+. replace type_bank = 1 if banks == "SUMITOMO MITSUI BANKING CORPORATION"
+(3 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "SURYODAY SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace private_dummy = 0 if banks == "SURYODAY SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace public_dummy = 0 if banks == "SURYODAY SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "SURYODAY SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace type_bank = 4 if banks == "SURYODAY SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "UBS AG"
+(35 real changes made)
+
+. replace private_dummy = 0 if banks == "UBS AG"
+(35 real changes made)
+
+. replace public_dummy = 0 if banks == "UBS AG"
+(35 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "UBS AG"
+(35 real changes made)
+
+. replace type_bank = 1 if banks == "UBS AG"
+(35 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "UJJIVAN SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace private_dummy = 0 if banks == "UJJIVAN SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace public_dummy = 0 if banks == "UJJIVAN SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "UJJIVAN SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. replace type_bank = 4 if banks == "UJJIVAN SMALL FINANCE BANK LIMITED"
+(21 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "UTKARSH SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace private_dummy = 0 if banks == "UTKARSH SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace public_dummy = 0 if banks == "UTKARSH SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "UTKARSH SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. replace type_bank = 4 if banks == "UTKARSH SMALL FINANCE BANK LIMITED"
+(22 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "VIJAYA BANK"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "VIJAYA BANK"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "VIJAYA BANK"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "VIJAYA BANK"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "VIJAYA BANK"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "WESTPAC BANKING CORPORATION"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "WESTPAC BANKING CORPORATION"
+(0 real changes made)
+
+. replace public_dummy = 0 if banks == "WESTPAC BANKING CORPORATION"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "WESTPAC BANKING CORPORATION"
+(0 real changes made)
+
+. replace type_bank = 1 if banks == "WESTPAC BANKING CORPORATION"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "ALLAHABAD BANK"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "ALLAHABAD BANK"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "ALLAHABAD BANK"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "ALLAHABAD BANK"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "ALLAHABAD BANK"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "ANDHRA BANK"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "ANDHRA BANK"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "ANDHRA BANK"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "ANDHRA BANK"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "ANDHRA BANK"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "BANK OF BAHRAIN & KUWAIT B.S.C."
+(1 real change made)
+
+. replace private_dummy = 0 if banks == "BANK OF BAHRAIN & KUWAIT B.S.C."
+(1 real change made)
+
+. replace public_dummy = 0 if banks == "BANK OF BAHRAIN & KUWAIT B.S.C."
+(1 real change made)
+
+. replace small_finance_dummy = 0 if banks == "BANK OF BAHRAIN & KUWAIT B.S.C."
+(1 real change made)
+
+. replace type_bank = 1 if banks == "BANK OF BAHRAIN & KUWAIT B.S.C."
+(1 real change made)
+
+. 
+. replace foreign_dummy = 0 if banks == "CORPORATION BANK"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "CORPORATION BANK"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "CORPORATION BANK"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "CORPORATION BANK"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "CORPORATION BANK"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "IDBI BANK LIMITED"
+(5 real changes made)
+
+. replace private_dummy = 0 if banks == "IDBI BANK LIMITED"
+(6 real changes made)
+
+. replace public_dummy = 1 if banks == "IDBI BANK LIMITED"
+(5 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "IDBI BANK LIMITED"
+(5 real changes made)
+
+. replace type_bank = 3 if banks == "IDBI BANK LIMITED"
+(5 real changes made)
+
+. 
+. replace foreign_dummy = 1 if banks == "KRUNG THAI BANK PUBLIC COMPANY LIMITED"
+(6 real changes made)
+
+. replace private_dummy = 0 if banks == "KRUNG THAI BANK PUBLIC COMPANY LIMITED"
+(6 real changes made)
+
+. replace public_dummy = 0 if banks == "KRUNG THAI BANK PUBLIC COMPANY LIMITED"
+(6 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "KRUNG THAI BANK PUBLIC COMPANY LIMITED"
+(6 real changes made)
+
+. replace type_bank = 1 if banks == "KRUNG THAI BANK PUBLIC COMPANY LIMITED"
+(6 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "LAKSHMI VILAS BANK LTD"
+(0 real changes made)
+
+. replace private_dummy = 1 if banks == "LAKSHMI VILAS BANK LTD"
+(0 real changes made)
+
+. replace public_dummy = 0 if banks == "LAKSHMI VILAS BANK LTD"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "LAKSHMI VILAS BANK LTD"
+(0 real changes made)
+
+. replace type_bank = 2 if banks == "LAKSHMI VILAS BANK LTD"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "ORIENTAL BANK OF COMMERCE"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "ORIENTAL BANK OF COMMERCE"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "ORIENTAL BANK OF COMMERCE"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "ORIENTAL BANK OF COMMERCE"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "ORIENTAL BANK OF COMMERCE"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "SHIVALIK SMALL FINANCE BANK LIMITED"
+(36 real changes made)
+
+. replace private_dummy = 0 if banks == "SHIVALIK SMALL FINANCE BANK LIMITED"
+(36 real changes made)
+
+. replace public_dummy = 0 if banks == "SHIVALIK SMALL FINANCE BANK LIMITED"
+(36 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "SHIVALIK SMALL FINANCE BANK LIMITED"
+(46 real changes made)
+
+. replace type_bank = 4 if banks == "SHIVALIK SMALL FINANCE BANK LIMITED"
+(46 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "SYNDICATE BANK"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "SYNDICATE BANK"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "SYNDICATE BANK"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "SYNDICATE BANK"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "SYNDICATE BANK"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "UNITED BANK OF INDIA"
+(0 real changes made)
+
+. replace private_dummy = 0 if banks == "UNITED BANK OF INDIA"
+(0 real changes made)
+
+. replace public_dummy = 1 if banks == "UNITED BANK OF INDIA"
+(0 real changes made)
+
+. replace small_finance_dummy = 0 if banks == "UNITED BANK OF INDIA"
+(0 real changes made)
+
+. replace type_bank = 3 if banks == "UNITED BANK OF INDIA"
+(0 real changes made)
+
+. 
+. replace foreign_dummy = 0 if banks == "UNITY SMALL FINANCE BANK LIMITED"
+(41 real changes made)
+
+. replace private_dummy = 0 if banks == "UNITY SMALL FINANCE BANK LIMITED"
+(41 real changes made)
+
+. replace public_dummy = 0 if banks == "UNITY SMALL FINANCE BANK LIMITED"
+(41 real changes made)
+
+. replace small_finance_dummy = 1 if banks == "UNITY SMALL FINANCE BANK LIMITED"
+(46 real changes made)
+
+. replace type_bank = 4 if banks == "UNITY SMALL FINANCE BANK LIMITED"
+(46 real changes made)
+
+. 
+. save "Stata/Merged Cov/bank_vars_all_cov.dta", replace
+file Stata/Merged Cov/bank_vars_all_cov.dta saved
+
+. 
+. use "Stata/Merged Cov/bank_vars_all_cov.dta", clear
+
+. browse if type_bank ==.
+
+. keep if quarter_2 == tq(2016q4)
+(4,230 observations deleted)
+
+. count if type_bank == 1 
+  48
+
+. *48 foreign banks
+. count if type_bank == 2
+  20
+
+. *20 private banks
+. count if type_bank == 3
+  14
+
+. *14 public banks
+. count if type_bank == 4
+  12
+
+. *12 small finance banks
+. 
+. log close
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Undergrad Thesis/Banks-NPAs/Stata/Merged Cov/merge_all2_cov
+> .log
+  log type:  text
+ closed on:  27 Aug 2025, 15:29:37
+----------------------------------------------------------------------------------------------

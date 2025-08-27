@@ -336,6 +336,4 @@ drop dup
 
 save "Stata/Branches Cov/state_dummies_cov.dta", replace
 
-save "Stata/Merged Cov/state_dummies_cov.dta", replace
-
 log close

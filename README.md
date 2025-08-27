@@ -7,3 +7,7 @@ I used data from RBI’s Database on the Indian Economy (DBIE), Razorpays’ Git
 
 ## Data Cleaning
 Will update this section
+
+## Notes for updating
+1. Update NPAs graph do file 
+2. Update Priority graph do file

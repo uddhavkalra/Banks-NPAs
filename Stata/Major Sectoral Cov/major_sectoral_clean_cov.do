@@ -49,6 +49,4 @@ sort(banks quarter_2)
 order banks quarter_2
 save "Stata/Major Sectoral Cov/major_sectoral_cov.dta", replace
 
-save "Stata/Merged Cov/major_sectoral_cov.dta", replace
-
 log close

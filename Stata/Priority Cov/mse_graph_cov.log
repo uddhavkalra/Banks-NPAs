@@ -1,0 +1,141 @@
+----------------------------------------------------------------------------
+      name:  <unnamed>
+       log:  /Users/uddhav/Desktop/Thesis/Stata/Priority Cov/mse_graph_cov.l
+> og
+  log type:  text
+ opened on:  31 Jan 2024, 12:45:23
+
+. drop _all
+
+. use bank_vars_cov.dta, clear
+
+. 
+end of do-file
+
+. do "/var/folders/5b/jc4253hj4rl3y0jlxy2y3trm0000gn/T//SD73571.000000"
+
+. use bank_vars_cov.dta, clear
+
+. gen priority_gnpa_ratio2 = priority_gnpa/total_assets
+(290 missing values generated)
+
+. collapse (mean) priority_gnpa_ratio2, by(type_bank quarter_2)
+
+. egen type_num = group(type_bank)
+(23 missing values generated)
+
+. xtset type_num quarter_2
+
+Panel variable: type_num (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+         Delta: 1 quarter
+
+. xtline priority_gnpa_ratio, overlay xline(227) title ("Gross NPA of pri") 
+> ///
+> ytitle("Rs Million") xtitle("Quarter") ///
+> legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
+> lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
+> saving(pri_graph, replace)
+(file pri_graph.gph not found)
+file pri_graph.gph saved
+
+. graph export pri_graph.jpg, replace
+file /Users/uddhav/Desktop/Thesis/Stata/Priority Cov/pri_graph.jpg saved
+    as JPG format
+
+. 
+. use bank_vars_cov.dta, clear
+
+. gen non_priority_gnpa_ratio2 = non_priority_gnpa/total_assets
+(291 missing values generated)
+
+. collapse (mean) non_priority_gnpa_ratio2, by(type_bank quarter_2)
+
+. egen type_num = group(type_bank)
+(23 missing values generated)
+
+. xtset type_num quarter_2
+
+Panel variable: type_num (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+         Delta: 1 quarter
+
+. xtline non_priority_gnpa_ratio, overlay xline(227) title ("Gross NPA of np
+> ri") ///
+> ytitle("Rs Million") xtitle("Quarter") ///
+> legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
+> lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
+> saving(npri_graph, replace)
+(file npri_graph.gph not found)
+file npri_graph.gph saved
+
+. graph export npri_graph.jpg, replace
+file /Users/uddhav/Desktop/Thesis/Stata/Priority Cov/npri_graph.jpg saved
+    as JPG format
+
+. 
+end of do-file
+
+. do "/var/folders/5b/jc4253hj4rl3y0jlxy2y3trm0000gn/T//SD73571.000000"
+
+. use bank_vars_cov.dta, clear
+
+. gen priority_gnpa_ratio2 = priority_gnpa/total_assets
+(290 missing values generated)
+
+. collapse (mean) priority_gnpa_ratio2, by(type_bank quarter_2)
+
+. egen type_num = group(type_bank)
+(23 missing values generated)
+
+. xtset type_num quarter_2
+
+Panel variable: type_num (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+         Delta: 1 quarter
+
+. xtline priority_gnpa_ratio, overlay xline(240) title ("Gross NPA of pri") 
+> ///
+> ytitle("Rs Million") xtitle("Quarter") ///
+> legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
+> lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
+> saving(pri_graph, replace)
+file pri_graph.gph saved
+
+. graph export pri_graph.jpg, replace
+file /Users/uddhav/Desktop/Thesis/Stata/Priority Cov/pri_graph.jpg saved
+    as JPG format
+
+. 
+. use bank_vars_cov.dta, clear
+
+. gen non_priority_gnpa_ratio2 = non_priority_gnpa/total_assets
+(291 missing values generated)
+
+. collapse (mean) non_priority_gnpa_ratio2, by(type_bank quarter_2)
+
+. egen type_num = group(type_bank)
+(23 missing values generated)
+
+. xtset type_num quarter_2
+
+Panel variable: type_num (unbalanced)
+ Time variable: quarter_2, 2012q2 to 2023q3, but with a gap
+         Delta: 1 quarter
+
+. xtline non_priority_gnpa_ratio, overlay xline(240) title ("Gross NPA of np
+> ri") ///
+> ytitle("Rs Million") xtitle("Quarter") ///
+> legend(lab(1 "Foreign Banks") lab(2 "Private Banks") ///
+> lab(3 "Public Banks") lab(4 "Small Finance Banks")) ///
+> saving(npri_graph, replace)
+file npri_graph.gph saved
+
+. graph export npri_graph.jpg, replace
+file /Users/uddhav/Desktop/Thesis/Stata/Priority Cov/npri_graph.jpg saved
+    as JPG format
+
+. 
+end of do-file
+
+. exit, clear
