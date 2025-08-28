@@ -9,6 +9,5 @@ I used data from RBI’s Database on the Indian Economy (DBIE), Razorpays’ Git
 Will update this section
 
 ## Notes for updating
-1. Add estimation files 
-2. Add master do file
-3. Update Data Cleaning Section
+1. Add master do file
+2. Update Data Cleaning Section
