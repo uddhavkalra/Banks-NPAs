@@ -5,9 +5,7 @@ Research question: Did Demonetization and COVID-19 led to a rise in banks’ Non
 ## Data
 I used data from RBI’s Database on the Indian Economy (DBIE), Razorpays’ Github and Nishusharma 1608’s Github. From DBIE, I use the Variables to be Published Bank and Bank Group-wise (For Public Access). From Razorpays’ Github, I use bank branch locations and from Nishusharma1608’s Github, I use census population data.
 
-## Data Cleaning
-Will update this section
-
-## Notes for updating
-1. Add master do file
-2. Update Data Cleaning Section
+## Run order
+1. cleaning.ipynb
+2. clean do file in each folder
+3. Merge_all.do for Demonetization and Merge_all_cov.do for COVID-19.
